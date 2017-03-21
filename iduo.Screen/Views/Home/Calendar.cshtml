@@ -1,0 +1,313 @@
+﻿@{
+    Layout = null;
+    var url = ViewBag.url;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>课程表</title>
+
+    <link href="~/Content/fullcalendar-3.2.0/fullcalendar.min.css" rel="stylesheet" />
+    <link href="~/Content/fullcalendar-3.2.0/fullcalendar.print.css" rel="stylesheet"  media='print' />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href="~/Content/AdminLTE-2.3.11/dist/css/AdminLTE.min.css" rel="stylesheet" />
+    <script src="~/Content/fullcalendar-3.2.0/lib/moment.min.js"></script>
+    <script src="~/Content/fullcalendar-3.2.0/lib/jquery.min.js"></script>
+    <script src="~/Content/fullcalendar-3.2.0/fullcalendar.min.js"></script>
+    <script src="~/Content/fullcalendar-3.2.0/locale-all.js"></script>
+    <script src="~/Content/fullcalendar-3.2.0/lib/jquery-ui-1.10.2.custom.min.js"></script>
+
+
+
+    <script>
+
+
+	$(document).ready(function() {
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		var t = date.getTime();
+        //初始化日历
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'agendaWeek'
+			},
+			height: 900,
+            theme:false,//是否使用jq-ui
+            slotDuration: '01:00:00',
+			defaultView: 'agendaWeek',
+			allDaySlot: false,
+			firstday: 0,//设置一周从什么时候开始，默认0是周日
+		    firstHour:'8:00',//设置一天的开始时间是几点
+		    minTime: '8:00',
+		    maxTime: '20:00',
+			defaultDate: date,
+			locale: 'zh-cn',//使用中文
+			editable: false,//禁止拖拽
+			droppable: false,
+			navLinks: false,
+			disableDragging: false,
+			eventStartEditable: false,  //是否允许调整日程的开始时间
+			eventDurationEditable:false,//是否允许调整日程的结束时间
+			buttonIcons: false, // show the prev/next text
+			weekNumbers: false,//设置日程表是否显示当前第几周
+			weekNumbersWithinDays: true,
+			navLinks: true, // can click day/week names to navigate views
+			editable: true,
+			eventLimit: false, // allow "more" link when too many events
+			displayEventTime: false,
+			buttonText: {
+			    today: '今天',
+			    week: '周', prev: '上周',
+			    next: '下周'
+
+			},
+			eventClick: function(event) {
+			    if (event.url) {
+			        return false;
+			    }
+			},
+			eventSources: [
+                 {
+                     url: '/Home/GetClass',
+                     type: 'GET',
+                     error: function () {
+                         console.log("发生错误")
+                     },
+                 }
+			],
+		
+		 });
+        //上一周
+		$('#calendar').find('.fc-prev-button').click(function () {
+		         alert("获取上一周的数据")
+		})
+        //下一周
+		$('#calendar').find('.fc-next-button').click(function () {
+                 alert("获取下一周的数据")
+		})
+	    //
+		var arr = document.getElementsByClassName(".fc-slats");
+		console.log("arr:" + arr.length)
+		for (var i = 0; i < arr.length; i++) {
+		    console.log("i:" + i)
+		    var date = arr[i].attributes["data-time"].value
+            console.log("date:"+date)
+		}
+	});
+    </script>
+    <style>
+        .fc-title {
+            text-align: left;
+            font-size: 2px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fc-time {
+            text-align: center;
+            /*display:none!important;*/
+        }
+
+        .fc-content {
+            margin:10% 0 0 10%!important;
+            font-size: 15px;
+        }
+        
+        .fc-event {
+            background-color: #15a563;
+            border-color: #15a563;
+        }
+           .fc-widget-content {
+            height: 4em !important;
+        }
+        #top {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            padding: 0 10px;
+            line-height: 40px;
+            font-size: 12px;
+        }
+
+        #calendar {
+            margin: 40px auto;
+            padding: 0 10px;
+        }
+
+        .ml-12 {
+            margin: 0 0 0 12%;
+        }
+
+     
+
+        .divjc {
+            position: absolute;
+            width: 104px;
+            top: 112px;
+            left: 10px;
+            background-color: #fff;
+            z-index: 99999;
+            border-color: #ddd;
+            background: #fafafa;
+            color: #15a563;
+        }
+
+            .divjc .divsw {
+                height: 342px;
+                border: 1px solid #333;
+            }
+
+            .divjc .divxw {
+                height: 226px;
+                border: 1px solid #333;
+            }
+
+            .divjc .divws {
+                height: 120px;
+                border: 1px solid #333;
+            }
+
+        .divam {
+            padding-top: 185px;
+            padding-left: 10px;
+            letter-spacing: 10px;
+            word-wrap: break-word;
+            font-size: 20px;
+            width: 50%;
+            float: left;
+            height: 100%;
+            border-right: 1px solid #333;
+            text-align: center;
+        }
+          .divclassam {
+            float: right;
+            width: 50%;
+            height: 100%;
+        }
+        .divpm {
+            padding-top: 103px;
+            padding-left: 10px;
+            letter-spacing: 10px;
+            word-wrap: break-word;
+            font-size: 20px;
+            width: 50%;
+            float: left;
+            height: 100%;
+            border-right: 1px solid #333;
+            text-align: center;
+        }
+         .divclasspm {
+            float: right;
+            width: 50%;
+            height: 100%;
+        }
+        .divmm {
+            padding-top: 40px;
+            padding-left: 10px;
+            letter-spacing: 10px;
+            word-wrap: break-word;
+            font-size: 20px;
+            width: 50%;
+            float: left;
+            height: 100%;
+            border-right: 1px solid #333;
+            text-align: center;
+        }
+        .divclassmm {
+            float: right;
+            width: 50%;
+            height: 100%;
+        }
+
+        .divclassam .divb {
+            height: 33.33333333%;
+        }
+
+        .divclasspm .divb {
+            height: 50%;
+        }
+
+        .divclassmm .divb {
+            height: 100%;
+        }
+
+        .divb {
+            line-height: 22px;
+            overflow: hidden;
+            margin: auto;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .divb-border {
+            border-bottom: 2px solid #333;
+        }
+
+        .divhead {
+            text-align: center;
+            border-style: solid;
+            border-width: 1px;
+            padding: 0;
+            vertical-align: top;
+            border-color: #ddd;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <section class="content-header ml-12">
+            <h1>课程表</h1>
+        </section>
+        <section class="content">
+            <div class="row">
+                <div class="col-md-9 ml-12">
+                    <div class="box box-primary">
+                        <div class="box-body no-padding">
+                            <!--left-->
+                            <div class="divjc">
+                                <div class="divhead">节次</div>
+                                <div class="divsw">
+                                    <div class="divam"><span>上</span><span>午</span></div>
+                                    <div class="divclassam">
+                                        <div class="divb divb-border">第<br />一<br />二<br />节<br />课</div>
+                                        <div class="divb divb-border" style="padding:10px;">第<br />三<br />节<br />课</div>
+                                        <div class="divb">第<br />四<br />五<br />节<br />课</div>
+                                    </div>
+
+                                </div>
+                                <div class="divxw">
+                                    <div class="divpm">下午</div>
+                                    <div class="divclasspm">
+                                        <div class="divb divb-border">第<br />六<br />七<br />节<br />课</div>
+                                        <div class="divb">第<br />八<br />九<br />节<br />课</div>
+                                    </div>
+
+                                </div>
+                                <div class="divws">
+                                    <div class="divmm">晚上</div>
+                                    <div class="divclassmm">
+                                        <div class="divb">第<br />十<br />11<br />12<br />课</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--right-->
+                            <div id='calendar'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

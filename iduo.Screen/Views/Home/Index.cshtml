@@ -1,0 +1,631 @@
+﻿
+@{
+    Layout = null;
+    var height = ViewBag.height;
+    var width = ViewBag.width;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>农林大学客户端</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href="~/Scripts/slick/slick.css" rel="stylesheet" />
+    <link href="~/Scripts/slick/slick-theme.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+    <link href="~/Content/AdminLTE-2.3.11/dist/css/AdminLTE.css" rel="stylesheet" />
+
+
+    <script src="~/Scripts/jquery/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/slick/slick.min.js"></script>
+    <script src="~/Scripts/bootstrap/bootstrap.js"></script>
+
+    <script src="~/Scripts/popwin.js"></script>
+    <style type="text/css">
+        .list-group{
+            color:white!important;
+        }
+        .box-header{
+            color:white;
+        }
+        .list-group-item {
+            background-color: rgba(255, 255, 255, 0.15)!important;
+        }
+        .box {
+            background-color: #999999 !important;
+        }
+        .btn-flat {
+            background-color: #205672;
+            color: white;
+        }
+
+        .middle-inner {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .middle-wrap {
+            display: table;
+            height: 100%;
+            width: 100%;
+        }
+
+        .margin-left-5 {
+            margin-left: 5% !important;
+        }
+
+        .padding-top-30 {
+            padding-top: 30px;
+        }
+
+        .logo {
+            /*margin: 20px 0 0;
+            margin-left: 50%;*/
+        }
+
+        .loc-list {
+            margin: 0,0,0,0 !important;
+        }
+
+        .bg-org {
+            background: #d1644d;
+        }
+
+        .bg-blue {
+            background: #0073b7;
+        }
+
+        .bg-green {
+            background: #42a529;
+        }
+
+        .bg-cus {
+            background: #009688;
+        }
+
+        .bg-kql {
+            background: #d1644d;
+        }
+
+        .bg-red {
+            background: #B0171F;
+        }
+
+        .bg-black {
+            background: #423737;
+        }
+
+        .bg-1 {
+            background: #B0171F;
+        }
+
+        .bg-2 {
+            background: #e58d1d;
+        }
+
+        .bg-3 {
+            background: #cb4981;
+        }
+
+        .bg-4 {
+            background: #139bab;
+        }
+
+        .bg-5 {
+            background: #7da32f;
+        }
+
+        .bg-6 {
+            background: #dbc212;
+        }
+
+        .bg-7 {
+            background: #006a77;
+        }
+
+        .bg-8 {
+            background: #2f4599;
+        }
+
+        .bg-9 {
+            background: #d1644d;
+        }
+
+        .col-item {
+            height: 250px !important;
+            width: 32% !important;
+            float: left;
+            margin-left: 8px;
+            margin-bottom: 8px;
+            border-radius: 20px;
+        }
+
+
+        .custom-userinfo {
+            color: white !important;
+            font-size: 30px;
+        }
+
+        .div-userinfo {
+            padding-top:10px;
+        }
+
+        a a:link, a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        .txt {
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .custom-i {
+            display: inline-block;
+            position: relative;
+            transition: all 0.3s ease 0s;
+            -webkit-transition: all 0.3s ease 0s;
+            -moz-transition: all 0.3s ease 0s;
+            height: 120px;
+            width: 150px;
+            color: white;
+            font-size: 100px;
+        }
+
+        .glyphicon {
+            color: white;
+            font-size: 40px;
+            left: 70%;
+            top: 15px;
+        }
+
+        .custom-form {
+            margin: 4% 0 0 35%;
+        }
+
+        .slick-dots li.slick-active button:before {
+            opacity: .75;
+            color: #fcf8e3;
+        }
+
+        .slick-list {
+            /*padding-left: 25px !important;*/
+        }
+
+        .sys-time {
+            color: white;
+            font-size: 24px;
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        .h125 {
+            height: 110px !important;
+        }
+
+        .div-user {
+            text-align: center !important;
+            padding-top: 2% !important;
+        }
+
+        .div-searchAndTime {
+            padding-top: 2% !important;
+            /*width: 31.333333%!important;*/
+        }
+
+        .div-weather {
+            padding-top: 0px;
+        }
+
+        .custom-weather {
+            color: white;
+            font: 24px;
+            margin-left: 15%;
+        }
+
+        .weather-info {
+            margin-top: 10px !important;
+            background-color: transparent;
+            font-size: 17px;
+            font-family: "Microsoft Yahei","黑体";
+            font-weight: normal;
+            color: white;
+            display: table;
+            padding: 0 0 0 10px;
+        }
+
+        .tq {
+            margin: 24px 0 0 0;
+            padding: 0 0 0 15px;
+        }
+
+        .img-ico {
+            height: 100px;
+            width: 100px;
+        }
+
+        .a-radius-7 {
+            border-radius: 7px;
+        }
+
+        .notice {
+            color: white;
+            font-size: 19px;
+            margin: 10px 0 0 16%;
+        }
+
+        .custom-body {
+            background-image: url(/Images/iduo-bg.png);
+            background-size: cover;
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: "Microsoft Yahei","黑体" !important;
+        }
+
+        .footer {
+            color: white;
+            text-align: center;
+            margin-top: 2%;
+        }
+        .custom-school {
+            /*text-align: center;*/
+            color: white;
+            font-size: 20px;
+            margin: 5% 0 0 0;
+        }
+        .custom-left-menu{
+            height:100%;
+            width:50px;
+        }
+        .col-md-9 {
+            margin: 2% 0 0 10%;
+        }
+        .custom-main {
+           /*margin-top:10%!important;*/
+        }
+        .custom-left {
+            float:left;
+            width:20%;
+        }
+        .custom-right{
+            float:right;
+            width:80%;
+        }
+        .qq{
+            color:white;
+            height:100%;
+        }
+        .div-left {
+            float: left;
+            width: 20%;
+            /*height: 1000px;*/
+            background-color: rgba(255, 255, 255, 0.15);
+            padding-top: 20px;
+        }
+        .div-right {
+            float: right;
+            width: 80%;
+            height: 1000px;
+        }
+        .div-left-top {
+            height: 30.33333333%;
+            padding-left: 10px;
+            border-right-width: 10px;
+        }
+        .div-left-mid {
+            height: 30.33333333%;
+            padding-left: 10px;
+            border-right-width: 10px;
+        }
+        .div-left-bottom {
+            height: 30.33333333%;
+            padding-left: 10px;
+            border-right-width: 10px;
+        }
+        .div-teaching-notice{color:#6d6d6d;font-size:18px;text-align:center;background-color:#ffffff}
+        /*.list-group {
+            color: #6d6d6d
+        }*/
+    </style>
+</head>
+<body class="custom-body" style="color:white;">
+    <div class="container-fluid">
+        <div class="row div-left">
+         
+
+            <div class="div-left-top">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h4 class="box-title">教学通知</h4>
+                    </div>
+                    <div class="box-body">
+                        <!-- the events -->
+                        <div id="external-events">
+                            <ul class="list-group">
+                                <li class="list-group-item">111111111</li>
+                                <li class="list-group-item">222222222</li>
+                                <li class="list-group-item">333333333</li>
+                                <li class="list-group-item">444444444</li>
+                                <li class="list-group-item">111111111</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="div-teaching-notice">教学通知</div>
+                <ul class="list-group">
+                    <li class="list-group-item">111111111</li>
+                    <li class="list-group-item">222222222</li>
+                    <li class="list-group-item">333333333</li>
+                    <li class="list-group-item">444444444</li>
+                    <li class="list-group-item">111111111</li>
+                    <li class="list-group-item">222222222</li>
+                </ul>*@
+            </div>
+            <div class="div-left-mid">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h4 class="box-title">教学动态</h4>
+                    </div>
+                    <div class="box-body">
+                        <!-- the events -->
+                        <div id="external-events">
+                            <ul class="list-group">
+                                <li class="list-group-item">111111111</li>
+                                <li class="list-group-item">222222222</li>
+                                <li class="list-group-item">333333333</li>
+                                <li class="list-group-item">444444444</li>
+                                <li class="list-group-item">111111111</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="div-teaching-notice">教学动态</div>
+                <ul class="list-group">
+                    <li class="list-group-item">111111111</li>
+                    <li class="list-group-item">222222222</li>
+                    <li class="list-group-item">333333333</li>
+                    <li class="list-group-item">444444444</li>
+                    <li class="list-group-item">111111111</li>
+                    <li class="list-group-item">222222222</li>
+                </ul>*@
+            </div>
+            <div class="div-left-bottom">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h4 class="box-title">讲座预告</h4>
+                    </div>
+                    <div class="box-body">
+                        <!-- the events -->
+                        <div id="external-events">
+                            <ul class="list-group">
+                                <li class="list-group-item">111111111</li>
+                                <li class="list-group-item">222222222</li>
+                                <li class="list-group-item">333333333</li>
+                                <li class="list-group-item">444444444</li>
+                                <li class="list-group-item">111111111</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="div-teaching-notice">讲座预告</div>
+                <ul class="list-group">
+                    <li class="list-group-item">111111111</li>
+                    <li class="list-group-item">222222222</li>
+                    <li class="list-group-item">333333333</li>
+                    <li class="list-group-item">444444444</li>
+                    <li class="list-group-item">111111111</li>
+                    <li class="list-group-item">222222222</li>
+                </ul>*@
+            </div>
+        </div>
+        <div class="row div-right">
+            <div class="row custom-main">
+                <div class="div-head">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="@Url.Action("index")" class="logo">
+                                <img class="a-radius-7" src="~/Images/logo-nonglin.png">
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="custom-school">
+                               <span> 2017-2018 学年第一学期 第一周 </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <form class="col-md-8 custom-form" role="search">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="navbar-search-input" placeholder="搜索">
+                                    <span class="input-group-btn">
+                                        <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                            <div class="sys-time">
+                            </div>
+                        </div>
+                        <div class="col-md-2 div-userinfo">
+                            <a href="#" class="custom-userinfo">
+                                <span>张浩</span>
+                                <img src="~/Images/iduoUser.png" style="width:45px;" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 ">
+                    <div class="row">
+                        <div class="slick-initialized slick-slider">
+                            <div class="slider multiple-items" id="applist">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/cityid.js"></script>
+<script type="text/javascript" src="http://ip.ws.126.net/ipquery"></script>
+<script type="text/javascript">
+    //weather 
+    //$(document).ready(function () {
+    //    var cityid = Site.Weather.defaultCity;
+    //    cityid = Site.Weather.city[lo][lc];
+    //    var script = document.createElement('script');
+    //    script.charset = 'gb2312';
+    //    script.id = 'weatherJs';
+    //    script.src = 'http://weather.gtimg.cn/city/' + cityid + '.js?ref=qqchannel';
+    //    script.type = 'text/javascript';
+    //    var div = document.getElementById('weather');
+    //    div.appendChild(script);
+    //    if (script.attachEvent) {
+    //        script.attachEvent('onreadystatechange', function () {
+    //            if (script.readyState == 4 || script.readyState == 'complete' || script.readyState == 'loaded') {
+    //                weatherCallback();
+    //            }
+    //        });
+    //    } else if (script.addEventListener) {
+    //        script.addEventListener('load', weatherCallback, false);
+    //    }
+    //});
+    $(function () {
+        var h = '@height';
+        var w = '@width';
+        LoadingApp(h,w);
+        $('.multiple-items').slick({
+            infinite: true,
+            dots: true,
+        });
+        updateTime(); setInterval(updateTime, 1000);
+    });
+    //系统时间
+    function updateTime() {
+        var a = new Array("日", "一", "二", "三", "四", "五", "六");
+        var week = new Date().getDay();
+        var str = "星期" + a[week];
+        $(".sys-time").html(new Date().toLocaleDateString() + "&nbsp;" + new Date().toLocaleTimeString()+"&nbsp"+str);
+    }
+    //加载应用,默认3X3
+    function LoadingApp(h, w) {
+        var defaultNum = 9;
+        var num=h*w;
+        if (num == 0 || num == undefined) num = defaultNum;
+        var href = "http://www.zjfc.edu.cn/";
+        //--start--静态模拟数据
+        var data = [
+            { title: '教室课表', bg: 'bg-1', url: 'http://112.16.69.191:8810/Pages/Course/JXCDINDEX.html', bgicon: 'fa-calendar' }, { title: '教师课表', bg: 'bg-2', url: 'http://112.16.69.191:8810/Pages/Course/JXRW2JS.html', bgicon: 'fa-calculator' },
+            { title: '课程课表', bg: 'bg-3', url: 'http://112.16.69.191:8810/Pages/Course/JXRW2KC.html', bgicon: 'fa-server' }, { title: '班级课表', bg: 'bg-4', url: 'http://112.16.69.191:8810/Pages/Course/JXRW2BJ.html', bgicon: 'fa-mortar-board' },
+            { title: '考试信息', bg: 'bg-5', url: href, bgicon: 'fa-database' }, { title: '学生课表', bg: 'bg-6', url: href, bgicon: 'fa-users' },
+            { title: '学院简介', bg: 'bg-7', url: href, bgicon: 'fa-pencil-square-o' }, { title: '空教室查询', bg: 'bg-8', url: href, bgicon: 'fa-cubes' },
+            { title: '成绩查询', bg: 'bg-9', url: href, bgicon: 'fa-book' }, { title: '1', bg: 'bg-9', url: href, bgicon: 'fa-cogs' },
+            { title: '1', bg: 'bg-8', url: href, bgicon: 'fa-cubes' }, { title: '1', bg: 'bg-7', url: href, bgicon: 'fa-pencil-square-o' },
+            { title: '1', bg: 'bg-6', url: href, bgicon: 'fa-database' }, { title: '1', bg: 'bg-5', url: href, bgicon: 'fa-users' },
+            { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-server' }, { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-mortar-board' }, { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calculator' },
+            { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-5', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-6', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-7', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-8', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-9', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-9', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-8', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-7', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-6', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-5', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-calendar' },
+            { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-calendar' },
+
+        ];
+        //获取随机数
+        function getRandom(min, max) {
+            var r = Math.random() * (max - min);
+            var re = Math.round(r + min);
+            re = Math.max(Math.min(re, max), min)
+
+            return re;
+        }
+        function getcolorArray(num) {
+            var colorarr = [];
+            for (var i = 1; i <= num; i++) {
+                colorarr.push(i);
+            }
+            colorarr.sort(
+                function () {
+                    return 0.5 - Math.random();
+                }
+            );
+            return colorarr;
+        }
+        // Icon
+        var IConArray = ["fa-server", "fa-mortar-board ", "fa-database", "fa-users", "fa-calculator", "fa-pencil-square-o", "fa-cubes", "fa-cogs", "fa-calendar"]
+        //--end--静态模拟数据
+
+        //应用数组
+        var arr = [];
+        $(data).each(function (index, item) {
+            var tpl = "<a href=\"{url}\" title=\"{text}\" target=\"_blank\" class=\"col-item {bgclass} \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
+            if (index % num == 0) {
+                arr.push("<div>");
+            }
+            //
+            var colorArray = getcolorArray(9);
+            var i = Math.floor((Math.random() * colorArray.length+1));
+
+            // url=href的url  bgclass=应用颜色   text 应用标题    iclass=应用名称
+            //  arr.push(tpl.replace("{url}", href).replace("{bgclass}", bgarr[str]).replace("{text}", item.title == null ? "" : item).replace("{title}", item.title).replace("{iclass}", "custom-i"));
+            //arr.push(tpl.replace("{url}", href).replace("{bgclass}", 'bg-' + i).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", IConArray[i-1]));
+            arr.push(tpl.replace("{url}", item.url).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
+
+            if (index % num == (num-1)) {
+                arr.push("</div>");
+            }
+
+        });
+        //获取并填充应用列表div
+        var container = $("#applist");
+        container.html(arr.join(''));
+    }
+    //天气
+    function weatherCallback() {
+        var wInfo = __weather_city;
+        if (wInfo) {
+            var cDate = new Date();
+            var dayOrNight = cDate.getHours() > wInfo.bi_sr.split(":")[0] && cDate.getHours() < wInfo.bi_ss.split(":")[0] ? '_baitian' : '_yejian';
+            var icoOnNight = "", bgOnNight = "";
+            switch (wInfo.sk_wt) {
+                case "00":
+                case "01":
+                    icoOnNight = dayOrNight;
+                    bgOnNight = dayOrNight;
+                    break;
+                case "02":
+                case "04":
+                case "05":
+                case "18":
+                case "53":
+                    bgOnNight = dayOrNight;
+                    break;
+                case "03":
+                case "13":
+                    icoOnNight = dayOrNight;
+                    break;
+            };
+            var wtObj = Site.weatherInfo.data[wInfo.sk_wt];
+            //格式: 图标 城市 天气 温度 风力/级别 湿度
+            var icoImg = "http://mat1.gtimg.com/weather/2014gaiban/" + "TB_" + wtObj.ico + icoOnNight + "_min.png";
+            $(".big-ico").html("<img class='img-ico' src=\"" + icoImg + "\" />");
+            $(".w-zl").html(lc);
+            $(".w-wd").html(wtObj.name + "&nbsp;&nbsp;&nbsp;<span class='wd-num'>" + wInfo.sk_tp + "</span>℃");
+            $(".w-sd").html(Site.windDir[wInfo.sk_wd] + wInfo.sk_wp + "级&nbsp;&nbsp;&nbsp;湿度：" + Math.abs(wInfo.sk_hd) + "%");
+        }
+    }
+</script>
