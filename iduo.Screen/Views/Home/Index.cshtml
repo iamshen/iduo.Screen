@@ -17,25 +17,28 @@
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
 
     <link href="~/Content/AdminLTE-2.3.11/dist/css/AdminLTE.css" rel="stylesheet" />
-
-
     <script src="~/Scripts/jquery/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/slick/slick.min.js"></script>
     <script src="~/Scripts/bootstrap/bootstrap.js"></script>
 
     <script src="~/Scripts/popwin.js"></script>
     <style type="text/css">
+        .btn-success {
+            right: 33px;
+            position: absolute;
+        }
         .list-group{
             color:white!important;
         }
-        .box-header{
-            color:white;
+        .box-header {
+            color: white;
+            text-align: center;
         }
         .list-group-item {
             background-color: rgba(255, 255, 255, 0.15)!important;
         }
         .box {
-            background-color: #999999 !important;
+            background-color: rgba(0, 0, 0, 0.1) !important;
         }
         .btn-flat {
             background-color: #205672;
@@ -330,9 +333,6 @@
             border-right-width: 10px;
         }
         .div-teaching-notice{color:#6d6d6d;font-size:18px;text-align:center;background-color:#ffffff}
-        /*.list-group {
-            color: #6d6d6d
-        }*/
     </style>
 </head>
 <body class="custom-body" style="color:white;">
@@ -434,12 +434,16 @@
                                 <img class="a-radius-7" src="~/Images/logo-nonglin.png">
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="custom-school">
-                               <span> 2017-2018 学年第一学期 第一周 </span>
+                               <span> 2017-2018 学年第一学期 第一周 </span>&nbsp;
+                                <br />
+                                <span onclick="GotoLink('http://www.zjfc.edu.cn/info/1114/32990.htm')" class="btn btn-success">
+                                    <i class="fa fa-calendar"></i> 校历
+                                </span>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <form class="col-md-8 custom-form" role="search">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="navbar-search-input" placeholder="搜索">
@@ -477,27 +481,7 @@
 <script src="~/Scripts/cityid.js"></script>
 <script type="text/javascript" src="http://ip.ws.126.net/ipquery"></script>
 <script type="text/javascript">
-    //weather 
-    //$(document).ready(function () {
-    //    var cityid = Site.Weather.defaultCity;
-    //    cityid = Site.Weather.city[lo][lc];
-    //    var script = document.createElement('script');
-    //    script.charset = 'gb2312';
-    //    script.id = 'weatherJs';
-    //    script.src = 'http://weather.gtimg.cn/city/' + cityid + '.js?ref=qqchannel';
-    //    script.type = 'text/javascript';
-    //    var div = document.getElementById('weather');
-    //    div.appendChild(script);
-    //    if (script.attachEvent) {
-    //        script.attachEvent('onreadystatechange', function () {
-    //            if (script.readyState == 4 || script.readyState == 'complete' || script.readyState == 'loaded') {
-    //                weatherCallback();
-    //            }
-    //        });
-    //    } else if (script.addEventListener) {
-    //        script.addEventListener('load', weatherCallback, false);
-    //    }
-    //});
+
     $(function () {
         var h = '@height';
         var w = '@width';
@@ -594,38 +578,8 @@
         var container = $("#applist");
         container.html(arr.join(''));
     }
-    //天气
-    function weatherCallback() {
-        var wInfo = __weather_city;
-        if (wInfo) {
-            var cDate = new Date();
-            var dayOrNight = cDate.getHours() > wInfo.bi_sr.split(":")[0] && cDate.getHours() < wInfo.bi_ss.split(":")[0] ? '_baitian' : '_yejian';
-            var icoOnNight = "", bgOnNight = "";
-            switch (wInfo.sk_wt) {
-                case "00":
-                case "01":
-                    icoOnNight = dayOrNight;
-                    bgOnNight = dayOrNight;
-                    break;
-                case "02":
-                case "04":
-                case "05":
-                case "18":
-                case "53":
-                    bgOnNight = dayOrNight;
-                    break;
-                case "03":
-                case "13":
-                    icoOnNight = dayOrNight;
-                    break;
-            };
-            var wtObj = Site.weatherInfo.data[wInfo.sk_wt];
-            //格式: 图标 城市 天气 温度 风力/级别 湿度
-            var icoImg = "http://mat1.gtimg.com/weather/2014gaiban/" + "TB_" + wtObj.ico + icoOnNight + "_min.png";
-            $(".big-ico").html("<img class='img-ico' src=\"" + icoImg + "\" />");
-            $(".w-zl").html(lc);
-            $(".w-wd").html(wtObj.name + "&nbsp;&nbsp;&nbsp;<span class='wd-num'>" + wInfo.sk_tp + "</span>℃");
-            $(".w-sd").html(Site.windDir[wInfo.sk_wd] + wInfo.sk_wp + "级&nbsp;&nbsp;&nbsp;湿度：" + Math.abs(wInfo.sk_hd) + "%");
-        }
+    
+    function GotoLink(url) {
+        window.open(url)
     }
 </script>

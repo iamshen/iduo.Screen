@@ -1,6 +1,8 @@
 ﻿@{
     Layout = null;
     var url = ViewBag.url;
+    var classTableName = string.IsNullOrEmpty(ViewBag.classTableName)?"课程表":ViewBag.classTableName;
+  
 }
 
 <!DOCTYPE html>
@@ -25,7 +27,6 @@
 
     <script>
 
-
 	$(document).ready(function() {
 		var date = new Date();
 		var d = date.getDate();
@@ -38,16 +39,17 @@
 				left: 'prev,next today',
 				center: 'title',
 				right: 'agendaWeek'
-			},
-			height: 900,
+            },
+            titleFormat: '[2017-2018 学年 第一学期 ]',
+			height: 910,
             theme:false,//是否使用jq-ui
             slotDuration: '01:00:00',
 			defaultView: 'agendaWeek',
 			allDaySlot: false,
 			firstday: 0,//设置一周从什么时候开始，默认0是周日
-		    firstHour:'8:00',//设置一天的开始时间是几点
-		    minTime: '8:00',
-		    maxTime: '20:00',
+		    firstHour:'00:00',//设置一天的开始时间是几点
+		    minTime: '00:00',
+		    maxTime: '24:00',
 			defaultDate: date,
 			locale: 'zh-cn',//使用中文
 			editable: false,//禁止拖拽
@@ -65,9 +67,9 @@
 			displayEventTime: false,
 			buttonText: {
 			    today: '今天',
-			    week: '周', prev: '上周',
-			    next: '下周'
-
+                week: '周',
+                prev: '上周',
+                next: '下周',
 			},
 			eventClick: function(event) {
 			    if (event.url) {
@@ -87,20 +89,11 @@
 		 });
         //上一周
 		$('#calendar').find('.fc-prev-button').click(function () {
-		         alert("获取上一周的数据")
 		})
         //下一周
 		$('#calendar').find('.fc-next-button').click(function () {
-                 alert("获取下一周的数据")
-		})
-	    //
-		var arr = document.getElementsByClassName(".fc-slats");
-		console.log("arr:" + arr.length)
-		for (var i = 0; i < arr.length; i++) {
-		    console.log("i:" + i)
-		    var date = arr[i].attributes["data-time"].value
-            console.log("date:"+date)
-		}
+        })
+       
 	});
     </script>
     <style>
@@ -111,6 +104,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            height:100%;
+            display:table-cell;
+            vertical-align:middle;
+            line-height:20px;
         }
 
         .fc-time {
@@ -119,8 +116,10 @@
         }
 
         .fc-content {
-            margin:10% 0 0 10%!important;
+            margin:3% 0 0 10%!important;
             font-size: 15px;
+            height:100%;
+            display:table;
         }
         
         .fc-event {
@@ -128,7 +127,7 @@
             border-color: #15a563;
         }
            .fc-widget-content {
-            height: 4em !important;
+            height: 33.3333333px !important;
         }
         #top {
             background: #eee;
@@ -139,7 +138,7 @@
         }
 
         #calendar {
-            margin: 40px auto;
+            margin: 10px  auto 0 auto;
             padding: 0 10px;
         }
 
@@ -147,12 +146,13 @@
             margin: 0 0 0 12%;
         }
 
-     
+
 
         .divjc {
+            /*display: none;*/
             position: absolute;
-            width: 104px;
-            top: 112px;
+            width: 92px;
+            top: 82px;
             left: 10px;
             background-color: #fff;
             z-index: 99999;
@@ -262,11 +262,146 @@
             background: #fafafa;
         }
     </style>
+    <style>
+        .div-jc {
+            /*display: none;*/
+            position: absolute;
+            height:838px;
+            width: 92px;
+            top: 82px;
+            left: 10px;
+            background-color: #fff;
+            z-index: 99999;
+            border-color: #ddd;
+            background: #fafafa;
+            color: #15a563;
+        }
+        .div-head {
+            text-align: center;
+            border-style: solid;
+            border-width: 1px;
+            padding: 0;
+            vertical-align: top;
+            border-color: #ddd;
+            background: #fafafa;
+        }
+
+            .div-jc .div-sw {
+                height: 40.444%;
+                border: 1px solid #333;
+            }
+
+            .div-jc .div-xw {
+                height: 32.666%;
+                border: 1px solid #333;
+            }
+
+            .div-jc .div-ws {
+                height: 24.444%;
+                border: 1px solid #333;
+            }
+
+        .div-am {
+            padding-top: 147px;
+            padding-left: 10px;
+            letter-spacing: 10px;
+            word-wrap: break-word;
+            font-size: 20px;
+            width: 50%;
+            float: left;
+            height: 100%;
+            border-right: 1px solid #333;
+            text-align: center;
+        }
+
+        .div-classam {
+            float: right;
+            width: 50%;
+            height: 100%;
+        }
+
+        .div-pm {
+            padding-top: 108px;
+            padding-left: 10px;
+            letter-spacing: 10px;
+            word-wrap: break-word;
+            font-size: 20px;
+            width: 50%;
+            float: left;
+            height: 100%;
+            border-right: 1px solid #333;
+            text-align: center;
+        }
+
+        .div-classpm {
+            float: right;
+            width: 50%;
+            height: 100%;
+        }
+
+        .div-mm {
+            padding-top: 74px;
+            padding-left: 10px;
+            letter-spacing: 10px;
+            word-wrap: break-word;
+            font-size: 20px;
+            width: 50%;
+            float: left;
+            height: 100%;
+            border-right: 1px solid #333;
+            text-align: center;
+        }
+
+        .div-classmm {
+            float: right;
+            width: 50%;
+            height: 100%;
+        }
+        .div-classam .div-b {
+            height: 20%;
+            line-height: 18px;
+            overflow: hidden;
+            margin: auto;
+            text-align: center;
+            font-weight: 600;
+            word-wrap: break-word;
+            letter-spacing: 9px;
+            padding-top: 15%;
+            padding-left: 15%;
+        }
+        .div-classpm .div-b {
+            height: 25%;
+            line-height: 18px;
+            overflow: hidden;
+            margin: auto;
+            text-align: center;
+            font-weight: 600;
+            word-wrap: break-word;
+            letter-spacing: 9px;
+            padding-top: 15%;
+            padding-left: 15%;
+        }
+        .div-classmm .div-b {
+            height: 33.333%;
+            line-height: 14px;
+            overflow: hidden;
+            margin: auto;
+            text-align: center;
+            font-weight: 600;
+            word-wrap: break-word;
+            letter-spacing: 9px;
+            padding-top: 18%;
+            padding-left: 15%;
+        }
+        .duv-b-border {
+            border-bottom: 1px solid #333;
+        }
+    </style>
 </head>
 <body>
     <div class="wrapper">
         <section class="content-header ml-12">
-            <h1>课程表</h1>
+            <h1>@(classTableName)</h1>
         </section>
         <section class="content">
             <div class="row">
@@ -274,29 +409,34 @@
                     <div class="box box-primary">
                         <div class="box-body no-padding">
                             <!--left-->
-                            <div class="divjc">
-                                <div class="divhead">节次</div>
-                                <div class="divsw">
-                                    <div class="divam"><span>上</span><span>午</span></div>
-                                    <div class="divclassam">
-                                        <div class="divb divb-border">第<br />一<br />二<br />节<br />课</div>
-                                        <div class="divb divb-border" style="padding:10px;">第<br />三<br />节<br />课</div>
-                                        <div class="divb">第<br />四<br />五<br />节<br />课</div>
+                            <div class="div-jc">
+                                <div class="div-head">节次</div>
+                                <div class="div-sw">
+                                    <div class="div-am"><span>上</span><span>午</span></div>
+                                    <div class="div-classam">
+                                        <div class="div-b duv-b-border">第一节</div>
+                                        <div class="div-b duv-b-border">第二节</div>
+                                        <div class="div-b duv-b-border">第三节</div>
+                                        <div class="div-b duv-b-border">第四节</div>
+                                        <div class="div-b">第五节</div>
+                                    </div>
+                                </div>
+                                <div class="div-xw">
+                                    <div class="div-pm">下午</div>
+                                    <div class="div-classpm">
+                                        <div class="div-b duv-b-border">第六节</div>
+                                        <div class="div-b duv-b-border">第七节</div>
+                                        <div class="div-b duv-b-border">第八节</div>
+                                        <div class="div-b">第九节</div>
                                     </div>
 
                                 </div>
-                                <div class="divxw">
-                                    <div class="divpm">下午</div>
-                                    <div class="divclasspm">
-                                        <div class="divb divb-border">第<br />六<br />七<br />节<br />课</div>
-                                        <div class="divb">第<br />八<br />九<br />节<br />课</div>
-                                    </div>
-
-                                </div>
-                                <div class="divws">
-                                    <div class="divmm">晚上</div>
-                                    <div class="divclassmm">
-                                        <div class="divb">第<br />十<br />11<br />12<br />课</div>
+                                <div class="div-ws">
+                                    <div class="div-mm">晚上</div>
+                                    <div class="div-classmm">
+                                        <div class="div-b duv-b-border">第十节</div>
+                                        <div class="div-b duv-b-border">第十一节</div>
+                                        <div class="div-b">第十二节</div>
                                     </div>
                                 </div>
                             </div>

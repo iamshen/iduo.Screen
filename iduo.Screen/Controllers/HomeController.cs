@@ -2,6 +2,7 @@
 using iduo.Screen.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -49,13 +50,11 @@ namespace iduo.Screen.Controllers
         /// <summary>
         /// 课程表
         /// </summary>
+        /// <param name="url"></param>
+        /// <param name="t">课程表页面标题</param>
         /// <returns></returns>
-        public ActionResult Calendar(string url)
+        public ActionResult Calendar(string url,string t)
         {
-#if DEBUG
-            var listvm2 = GetClassVM("");
-            ClassVMdata = listvm2;
-#endif
 
             if (!string.IsNullOrEmpty(url))
             {
@@ -65,9 +64,9 @@ namespace iduo.Screen.Controllers
                 ClassVMdata = listvm;
             }
 
+            ViewBag.classTableName = t;
             return View();
         }
-     
         /// <summary>
         /// 发送请求，获取课程数据
         /// </summary>
@@ -96,7 +95,6 @@ namespace iduo.Screen.Controllers
                 throw new Exception(ex.Message);
             }
         }
-
         /// <summary>
         /// 获取课程数据模型
         /// </summary>
@@ -105,71 +103,140 @@ namespace iduo.Screen.Controllers
         public List<ClassVM> GetClassVM(string data)
         {
             var list = new List<Source>();//从接口获取到的数据集合
-            var listVM = new List<ClassVM>();//发送前台的数据模型集合
+            var listVM = new List<ClassVM>();//临时处理的数据模型集合
+            var listvmData = new List<ClassVM>();//发送前台的数据模型集合
             try
             {
-#if DEBUG
-                //for (int i = 13; i < 20; i++)
-                //{
-                //    for (int j = 1; j < 13; j++)
-                //    {
-                //        var source = new Source()
-                //        {
-                //            Title = GetTitle(j),
-                //            Content = "\r\n" + j + "课" + " \r\n" + j + "老师",
-                //            Date = "2017-03-" + i
-                //        };
-                //        list.Add(source);
-                //    }
-
-                //}
-
-                data = "[{title:'第四节课',content:'高分子化学\r\n教师：刘晓欢/刘丽娜/宋平安\r\n班级：高分子材料152;高分子材料151;\r\n上课地点:教5207(多媒体)',date:'2017-03-13'},{title:'第四节课',content:'高分子化学\r\n教师：刘晓欢/刘丽娜/宋平安\r\n班级：高分子材料152;高分子材料151;\r\n上课地点:教5204(多媒体)',date:'2017-03-15'},{title:'第三节课',content:'高分子化学\r\n教师：刘晓欢/刘丽娜/宋平安\r\n班级：高分子材料152;高分子材料151;\r\n上课地点:教5207(多媒体)',date:'2017-03-13'},{title:'第三节课',content:'高分子化学\r\n教师：刘晓欢/刘丽娜/宋平安\r\n班级：高分子材料152;高分子材料151;\r\n上课地点:教5204(多媒体)',date:'2017-03-15'}]";
-
-
-
-#endif
-
+                //序列化json 数据
                 JavaScriptSerializer ser = new JavaScriptSerializer();
                 List<Source> objs = ser.Deserialize<List<Source>>(data);
                 list = objs;
                 if (list != null)
                 {
-                    //根据课程节次，获取课程的具体上课时间
+                    //把序列化后的数根据节次设置上课的开始时间和结束时间
                     foreach (var item in list)
                     {
-                        var titleInt = (int)(Classtitle)Enum.Parse(typeof(Classtitle), item.Title);
-                        var num = titleInt % 2;
-                        //只获取奇数节次的课程
-                        if (num != 0)
-                        {
-                            var vm = GetModel((Classtitle)Enum.Parse(typeof(Classtitle), item.Title), item.Date);
-                            vm.title = item.Content;
-                            listVM.Add(vm);
-                        }
+                        var vm = GetModel((Classtitle)Enum.Parse(typeof(Classtitle), item.Title), item.Date);
+                        vm.title = item.Content;
+                        vm.Date = item.Date;
+                        listVM.Add(vm);//把处理后的课程数据添加到集合中
+                    }
 
+                    listVM = listVM.OrderByDescending(x => x.Date).ToList();
+
+                    //处理连堂课程
+                    foreach (var item in listVM)
+                    {
+                        //同一天内容相同的课程
+                        var dayClass = listVM.Where(x => x.title == item.title && x.Date == item.Date).OrderBy(x=>x.Id).ToList();
+                        //如果存在，查询出连堂课
+                        var id = dayClass.Select(x => x.Id).ToArray();//所有id
+                        var result = SortId(id);
+                        //相邻的课程id
+                        var intID = GetIntXLID(id);
+                        //不相邻的课程id
+                        var diff = id.Where(x => !intID.Contains(x)).ToArray();
+                        //处理连堂课程合并
+                        if (intID.Count() > 0)
+                        {
+                            var length = intID.Length;
+                            var f = intID[0];
+                            var l = intID[length - 1];
+                            var first = dayClass.SingleOrDefault(x => x.Id == f);
+                            var last = dayClass.SingleOrDefault(x => x.Id == l);
+                            var newVM = new ClassVM()
+                            {
+                                Date = first.Date,
+                                start = first.start,
+                                startDate = first.startDate,
+                                end = last.end,
+                                endDate = last.endDate,
+                                title = first.title
+                            };
+                            var qwert = listvmData.SingleOrDefault(x => x.title == newVM.title && (x.startDate <= newVM.startDate && x.endDate <= newVM.endDate));
+                            //遍历到连堂中的课程则不处理，否则合并后添加到集合中
+                            if (qwert==null)
+                                listvmData.Add(newVM);
+                        }
+                        if (diff.Count() > 0)
+                        {
+                            //查询非连堂的课程，添加到集合中
+                            foreach (var di in diff)
+                            {
+                                var newVM = dayClass.SingleOrDefault(x => x.Id == di);
+                                var qwert = listvmData.SingleOrDefault(x => x.title == newVM.title && (x.startDate == newVM.startDate && x.endDate == newVM.endDate));
+                                if (qwert == null)
+                                    listvmData.Add(newVM);
+                            }
+                        }
                     }
                 }
             }
-            catch (Exception)
+
+            catch (Exception ex)
             {
-
-                return listVM;
+                return listvmData;
             }
-          
-
-            return listVM;
+            return listvmData;
         }
-
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int[] SortId(int[] id)
+        {
+            int temp = 0;
+            for (int i = 0; i < id.Length - 1; i++)
+            {
+                for (int j = 0; j < id.Length - 1 - i; j++)
+                {
+                    if (id[j] > id[j + 1])
+                    {
+                        temp = id[j];
+                        id[j] = id[j + 1];
+                        id[j + 1] = temp;
+                    }
+                }
+            }
+            return id;
+        }
+        /// <summary>
+        /// 查找相邻的课程ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int[] GetIntXLID(int[] id)
+        {
+            List<int> ids = new List<int>();
+            for (int i = 0; i < id.Length - 1; i++)
+            {
+                var item = id[i];
+                var next = id[i + 1];
+                var temp = next - item;
+                if (temp == 1)
+                {
+                    var q = ids.Contains(item);
+                    var a = ids.Contains(next);
+                    if (!q)
+                        ids.Add(item);
+                    if (!a)
+                        ids.Add(next);
+                }
+            }
+            var idArray = ids.ToArray();
+            return idArray;
+        }
 
         //获取课程
         [HttpGet]
-        public ActionResult GetClass()
+        public ActionResult GetClass(string start,string end)
         {
-            return Json(ClassVMdata, JsonRequestBehavior.AllowGet);
+            var startDate = DateTime.ParseExact(start, "yyyy-MM-dd", CultureInfo.CurrentCulture);
+            var endDate = DateTime.ParseExact(end, "yyyy-MM-dd", CultureInfo.CurrentCulture);
+            var data = ClassVMdata.Where(x => x.startDate >=startDate && x.endDate <= endDate).ToList();
+            return Json(data, JsonRequestBehavior.AllowGet);
         }
-      
-
         /// <summary>
         /// 根据节次获取课程时间
         /// </summary>
@@ -184,118 +251,70 @@ namespace iduo.Screen.Controllers
                 var date = DateTime.Now;
                 switch (classtitle)
                 {
-                    //第一、第二节课
                     case Classtitle.第一节课:
-                        vm.start = datetime + "T08:00:00";
-                        vm.end   = datetime + "T10:00:00";
+                        vm.start = datetime + "T00:00:00";
+                        vm.end = datetime + "T02:00:00";
                         break;
                     case Classtitle.第二节课:
-                        vm.start = datetime + "T08:00:00";
-                        vm.end   = datetime + "T10:00:00";
-
+                        vm.start = datetime + "T02:00:00";
+                        vm.end = datetime + "T04:00:00";
                         break;
                     case Classtitle.第三节课:
-                        vm.start = datetime + "T10:00:00";
-                        vm.end   = datetime + "T12:00:00";
+                        vm.start = datetime + "T04:00:00";
+                        vm.end = datetime + "T06:00:00";
                         break;
                     case Classtitle.第四节课:
-                        vm.start = datetime + "T12:00:00";
-                        vm.end   = datetime + "T14:00:00";
+                        vm.start = datetime + "T06:00:00";
+                        vm.end = datetime + "T08:00:00";
+                        vm.startDate = DateTime.Parse(vm.start);
+                        vm.endDate = DateTime.Parse(vm.end);
                         break;
                     case Classtitle.第五节课:
-                        vm.start = datetime + "T12:00:00";
-                        vm.end   = datetime + "T14:00:00";
+                        vm.start = datetime + "T08:00:00";
+                        vm.end = datetime + "T10:00:00";
                         break;
                     case Classtitle.第六节课:
-                        vm.start = datetime + "T14:00:00";
-                        vm.end   = datetime + "T16:00:00";
+                        vm.start = datetime + "T10:00:00";
+                        vm.end = datetime + "T12:00:00";
                         break;
                     case Classtitle.第七节课:
-                        vm.start = datetime + "T14:00:00";
-                        vm.end   = datetime + "T16:00:00";
+                        vm.start = datetime + "T12:00:00";
+                        vm.end = datetime + "T14:00:00";
                         break;
                     case Classtitle.第八节课:
-                        vm.start = datetime + "T16:00:00";
-                        vm.end   = datetime + "T18:00:00";
+                        vm.start = datetime + "T14:00:00";
+                        vm.end = datetime + "T16:00:00";
                         break;
                     case Classtitle.第九节课:
                         vm.start = datetime + "T16:00:00";
-                        vm.end   = datetime + "T18:00:00";
+                        vm.end = datetime + "T18:00:00";
                         break;
                     case Classtitle.第十节课:
                         vm.start = datetime + "T18:00:00";
-                        vm.end   = datetime + "T20:00:00";
+                        vm.end = datetime + "T20:00:00";
                         break;
                     case Classtitle.第十一节课:
-                        vm.start = datetime + "T18:00:00";
-                        vm.end = datetime + "T20:00:00";
+                        vm.start = datetime + "T20:00:00";
+                        vm.end = datetime + "T22:00:00";
                         break;
                     case Classtitle.第十二节课:
-                        vm.start = datetime + "T18:00:00";
-                        vm.end = datetime + "T20:00:00";
+                        vm.start = datetime + "T22:00:00";
+                        vm.end = datetime + "T23:59:00";
                         break;
                     default:
                         break;
                 }
+                vm.Id = (int)classtitle;
+                vm.startDate = DateTime.Parse(vm.start);
+                vm.endDate = DateTime.Parse(vm.end);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                //throw new Exception(ex.Message);
+                return vm;
             }
-
+          
             return vm;
-        }
-
-
-       
-        /// <summary>
-        /// 模拟数据时使用
-        /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        public string GetTitle(int i)
-        {
-            var title = "";
-            switch (i)
-            {
-                case 1:
-                    title = "第一节课";
-                    break;
-                case 2:
-                    title = "第二节课";
-                    break;
-                case 3:
-                    title = "第三节课";
-                    break;
-                case 4:
-                    title = "第四节课";
-                    break;
-                case 5:
-                    title = "第五节课";
-                    break;
-                case 6:
-                    title = "第六节课";
-                    break;
-                case 7:
-                    title = "第七节课";
-                    break;
-                case 8:
-                    title = "第八节课";
-                    break;
-                case 9:
-                    title = "第九节课";
-                    break;
-                case 10:
-                    title = "第十节课";
-                    break;
-                case 11:
-                    title = "第十一节课";
-                    break;
-                case 12:
-                    title = "第十二节课";
-                    break;
-            }
-            return title;
         }
 
         #region Method
