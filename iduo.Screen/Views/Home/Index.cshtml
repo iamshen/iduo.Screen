@@ -1,8 +1,13 @@
-﻿
+﻿@using iduo.Screen.Models
 @{
     Layout = null;
-    var height = ViewBag.height;
-    var width = ViewBag.width;
+    var num = ViewBag.num;
+    var lessNum = ViewBag.lessNum;
+    var xiaoli = ViewBag.xiaoli;
+    var tz = ViewBag.teachingNoticeList as List<Notice>;
+    var dt = ViewBag.teachingTrendsList as List<Notice>; ;
+    var yg = ViewBag.lectureNoticeList as List<Notice>; ;
+
 }
 <!DOCTYPE html>
 
@@ -20,26 +25,31 @@
     <script src="~/Scripts/jquery/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/slick/slick.min.js"></script>
     <script src="~/Scripts/bootstrap/bootstrap.js"></script>
-
+    
     <script src="~/Scripts/popwin.js"></script>
     <style type="text/css">
         .btn-success {
             right: 33px;
             position: absolute;
         }
-        .list-group{
-            color:white!important;
+
+        .list-group {
+            color: white !important;
         }
+
         .box-header {
             color: white;
             text-align: center;
         }
+
         .list-group-item {
-            background-color: rgba(255, 255, 255, 0.15)!important;
+            background-color: rgba(255, 255, 255, 0.15) !important;
         }
+
         .box {
             background-color: rgba(0, 0, 0, 0.1) !important;
         }
+
         .btn-flat {
             background-color: #205672;
             color: white;
@@ -147,14 +157,13 @@
             border-radius: 20px;
         }
 
-
         .custom-userinfo {
             color: white !important;
             font-size: 30px;
         }
 
         .div-userinfo {
-            padding-top:10px;
+            padding-top: 10px;
         }
 
         a a:link, a:visited {
@@ -277,68 +286,99 @@
             text-align: center;
             margin-top: 2%;
         }
+
         .custom-school {
             /*text-align: center;*/
             color: white;
             font-size: 20px;
             margin: 5% 0 0 0;
         }
-        .custom-left-menu{
-            height:100%;
-            width:50px;
+
+        .custom-left-menu {
+            height: 100%;
+            width: 50px;
         }
+
         .col-md-9 {
             margin: 2% 0 0 10%;
         }
+
         .custom-main {
-           /*margin-top:10%!important;*/
+            /*margin-top:10%!important;*/
         }
+
         .custom-left {
-            float:left;
-            width:20%;
-        }
-        .custom-right{
-            float:right;
-            width:80%;
-        }
-        .qq{
-            color:white;
-            height:100%;
-        }
-        .div-left {
             float: left;
             width: 20%;
+        }
+
+        .custom-right {
+            float: right;
+            width: 80%;
+        }
+
+        .qq {
+            color: white;
+            height: 100%;
+        }
+
+        .div-left {
+            float: left;
+            width: 15%;
             /*height: 1000px;*/
             background-color: rgba(255, 255, 255, 0.15);
             padding-top: 20px;
+            margin-left: 50px;
+            margin-top: 5%;
         }
+
         .div-right {
             float: right;
             width: 80%;
             height: 1000px;
         }
+
         .div-left-top {
             height: 30.33333333%;
             padding-left: 10px;
             border-right-width: 10px;
         }
+
         .div-left-mid {
             height: 30.33333333%;
             padding-left: 10px;
             border-right-width: 10px;
         }
+
         .div-left-bottom {
             height: 30.33333333%;
             padding-left: 10px;
             border-right-width: 10px;
         }
-        .div-teaching-notice{color:#6d6d6d;font-size:18px;text-align:center;background-color:#ffffff}
+
+        .div-teaching-notice {
+            color: #6d6d6d;
+            font-size: 18px;
+            text-align: center;
+            background-color: #ffffff
+        }
+        .div-tz .list-group-item {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        a{
+            color:white;
+        }
+        a:hover{
+            color:#e58d1d
+        }
     </style>
 </head>
 <body class="custom-body" style="color:white;">
     <div class="container-fluid">
+
         <div class="row div-left">
-         
 
             <div class="div-left-top">
                 <div class="box box-solid">
@@ -347,27 +387,27 @@
                     </div>
                     <div class="box-body">
                         <!-- the events -->
-                        <div id="external-events">
+                        <div class="div-tz">
                             <ul class="list-group">
-                                <li class="list-group-item">111111111</li>
-                                <li class="list-group-item">222222222</li>
-                                <li class="list-group-item">333333333</li>
-                                <li class="list-group-item">444444444</li>
-                                <li class="list-group-item">111111111</li>
+                                @if (tz.Count() > 0 && tz != null)
+                                {
+                                    foreach (var item in tz)
+                                    {
+                                        <li class="list-group-item"><a href="@item.url">@item.title</a></li>
+                                    }
+                                }
+                                @*@for (int i = 1; i <= 4; i++)
+                                {
+                                  <li class="list-group-item"><a>浙江农林大学2017年博士研究生招生简</a></li>
+                                }*@
+                                <li class="list-group-item text-center"><a>查看更多....</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                @*<div class="div-teaching-notice">教学通知</div>
-                <ul class="list-group">
-                    <li class="list-group-item">111111111</li>
-                    <li class="list-group-item">222222222</li>
-                    <li class="list-group-item">333333333</li>
-                    <li class="list-group-item">444444444</li>
-                    <li class="list-group-item">111111111</li>
-                    <li class="list-group-item">222222222</li>
-                </ul>*@
+              
             </div>
+
             <div class="div-left-mid">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -375,27 +415,26 @@
                     </div>
                     <div class="box-body">
                         <!-- the events -->
-                        <div id="external-events">
+                        <div class="div-tz">
                             <ul class="list-group">
-                                <li class="list-group-item">111111111</li>
-                                <li class="list-group-item">222222222</li>
-                                <li class="list-group-item">333333333</li>
-                                <li class="list-group-item">444444444</li>
-                                <li class="list-group-item">111111111</li>
+                                 @if (dt.Count() > 0 && dt != null)
+                                {
+                                    foreach (var item in dt)
+                                    {
+                                        <li class="list-group-item"><a href="@item.url">@item.title</a></li>
+                                    }
+                                }
+                                @*@for (int i = 1; i <= 4; i++)
+                                {
+                                    <li class="list-group-item"><a>浙江农林大学2017年博士研究生招生简</a></li>
+                                }*@
+                                <li class="list-group-item text-center"><a>查看更多....</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                @*<div class="div-teaching-notice">教学动态</div>
-                <ul class="list-group">
-                    <li class="list-group-item">111111111</li>
-                    <li class="list-group-item">222222222</li>
-                    <li class="list-group-item">333333333</li>
-                    <li class="list-group-item">444444444</li>
-                    <li class="list-group-item">111111111</li>
-                    <li class="list-group-item">222222222</li>
-                </ul>*@
             </div>
+
             <div class="div-left-bottom">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -403,30 +442,33 @@
                     </div>
                     <div class="box-body">
                         <!-- the events -->
-                        <div id="external-events">
+                        <div class="div-tz">
                             <ul class="list-group">
-                                <li class="list-group-item">111111111</li>
-                                <li class="list-group-item">222222222</li>
-                                <li class="list-group-item">333333333</li>
-                                <li class="list-group-item">444444444</li>
-                                <li class="list-group-item">111111111</li>
+                                   @if (yg .Count() > 0 && yg != null)
+                                {
+                                    foreach (var item in yg)
+                                    {
+                                        <li class="list-group-item"><a href="@item.url">@item.title</a></li>
+                                    }
+                                }
+                                @*@for (int i = 1; i <= 4; i++)
+                                {
+                                    <li class="list-group-item"><a>浙江农林大学2017年博士研究生招生简</a></li>
+                                }*@
+                                <li class="list-group-item text-center"><a>查看更多....</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                @*<div class="div-teaching-notice">讲座预告</div>
-                <ul class="list-group">
-                    <li class="list-group-item">111111111</li>
-                    <li class="list-group-item">222222222</li>
-                    <li class="list-group-item">333333333</li>
-                    <li class="list-group-item">444444444</li>
-                    <li class="list-group-item">111111111</li>
-                    <li class="list-group-item">222222222</li>
-                </ul>*@
             </div>
+
         </div>
+
+
         <div class="row div-right">
+
             <div class="row custom-main">
+
                 <div class="div-head">
                     <div class="row">
                         <div class="col-md-3">
@@ -436,7 +478,10 @@
                         </div>
                         <div class="col-md-4">
                             <div class="custom-school">
-                               <span> 2017-2018 学年第一学期 第一周 </span>&nbsp;
+                                @if (!string.IsNullOrEmpty(xiaoli))
+                                {
+                                    <span>@xiaoli</span>
+                                }
                                 <br />
                                 <span onclick="GotoLink('http://www.zjfc.edu.cn/info/1114/32990.htm')" class="btn btn-success">
                                     <i class="fa fa-calendar"></i> 校历
@@ -465,6 +510,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-9 ">
                     <div class="row">
                         <div class="slick-initialized slick-slider">
@@ -473,19 +519,20 @@
                         </div>
                     </div>
                 </div>
+
             </div>
+
         </div>
+
     </div>
 </body>
+
 </html>
 <script src="~/Scripts/cityid.js"></script>
-<script type="text/javascript" src="http://ip.ws.126.net/ipquery"></script>
 <script type="text/javascript">
 
     $(function () {
-        var h = '@height';
-        var w = '@width';
-        LoadingApp(h,w);
+        LoadingApp();
         $('.multiple-items').slick({
             infinite: true,
             dots: true,
@@ -500,85 +547,43 @@
         $(".sys-time").html(new Date().toLocaleDateString() + "&nbsp;" + new Date().toLocaleTimeString()+"&nbsp"+str);
     }
     //加载应用,默认3X3
-    function LoadingApp(h, w) {
+    function LoadingApp() {
         var defaultNum = 9;
-        var num=h*w;
+        var num = '@num';
+        var lessnum = '@lessNum';
         if (num == 0 || num == undefined) num = defaultNum;
-        var href = "http://www.zjfc.edu.cn/";
-        //--start--静态模拟数据
-        var data = [
-            { title: '教室课表', bg: 'bg-1', url: 'http://112.16.69.191:8810/Pages/Course/JXCDINDEX.html', bgicon: 'fa-calendar' }, { title: '教师课表', bg: 'bg-2', url: 'http://112.16.69.191:8810/Pages/Course/JXRW2JS.html', bgicon: 'fa-calculator' },
-            { title: '课程课表', bg: 'bg-3', url: 'http://112.16.69.191:8810/Pages/Course/JXRW2KC.html', bgicon: 'fa-server' }, { title: '班级课表', bg: 'bg-4', url: 'http://112.16.69.191:8810/Pages/Course/JXRW2BJ.html', bgicon: 'fa-mortar-board' },
-            { title: '考试信息', bg: 'bg-5', url: href, bgicon: 'fa-database' }, { title: '学生课表', bg: 'bg-6', url: href, bgicon: 'fa-users' },
-            { title: '学院简介', bg: 'bg-7', url: href, bgicon: 'fa-pencil-square-o' }, { title: '空教室查询', bg: 'bg-8', url: href, bgicon: 'fa-cubes' },
-            { title: '成绩查询', bg: 'bg-9', url: href, bgicon: 'fa-book' }, { title: '1', bg: 'bg-9', url: href, bgicon: 'fa-cogs' },
-            { title: '1', bg: 'bg-8', url: href, bgicon: 'fa-cubes' }, { title: '1', bg: 'bg-7', url: href, bgicon: 'fa-pencil-square-o' },
-            { title: '1', bg: 'bg-6', url: href, bgicon: 'fa-database' }, { title: '1', bg: 'bg-5', url: href, bgicon: 'fa-users' },
-            { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-server' }, { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-mortar-board' }, { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calculator' },
-            { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-5', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-6', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-7', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-8', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-9', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-9', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-8', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-7', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-6', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-5', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-1', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-2', url: href, bgicon: 'fa-calendar' },
-            { title: '1', bg: 'bg-3', url: href, bgicon: 'fa-calendar' }, { title: '1', bg: 'bg-4', url: href, bgicon: 'fa-calendar' },
-
-        ];
-        //获取随机数
-        function getRandom(min, max) {
-            var r = Math.random() * (max - min);
-            var re = Math.round(r + min);
-            re = Math.max(Math.min(re, max), min)
-
-            return re;
-        }
-        function getcolorArray(num) {
-            var colorarr = [];
-            for (var i = 1; i <= num; i++) {
-                colorarr.push(i);
-            }
-            colorarr.sort(
-                function () {
-                    return 0.5 - Math.random();
-                }
-            );
-            return colorarr;
-        }
-        // Icon
-        var IConArray = ["fa-server", "fa-mortar-board ", "fa-database", "fa-users", "fa-calculator", "fa-pencil-square-o", "fa-cubes", "fa-cogs", "fa-calendar"]
-        //--end--静态模拟数据
-
-        //应用数组
+      
         var arr = [];
+        var data = [];
+        $.ajax({
+            url: '/Home/GetApp',
+            type: "Get",
+            async: false,
+            datetype: "json",
+            success: function (result) {
+                var json = eval('(' + result + ')');
+                data = json;
+               
+            },
+            error: function (result) {
+                console.log("发生错误" + result);
+            }
+        });
         $(data).each(function (index, item) {
-            var tpl = "<a href=\"{url}\" title=\"{text}\" target=\"_blank\" class=\"col-item {bgclass} \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
+            var tpl = "<a style=\"background:{bgclass}\" href=\"{url}\" title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
             if (index % num == 0) {
                 arr.push("<div>");
             }
-            //
-            var colorArray = getcolorArray(9);
-            var i = Math.floor((Math.random() * colorArray.length+1));
-
-            // url=href的url  bgclass=应用颜色   text 应用标题    iclass=应用名称
-            //  arr.push(tpl.replace("{url}", href).replace("{bgclass}", bgarr[str]).replace("{text}", item.title == null ? "" : item).replace("{title}", item.title).replace("{iclass}", "custom-i"));
-            //arr.push(tpl.replace("{url}", href).replace("{bgclass}", 'bg-' + i).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", IConArray[i-1]));
             arr.push(tpl.replace("{url}", item.url).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
-
-            if (index % num == (num-1)) {
+            if (index % num == lessnum) {
                 arr.push("</div>");
             }
-
         });
-        //获取并填充应用列表div
+
         var container = $("#applist");
         container.html(arr.join(''));
     }
-    
+
     function GotoLink(url) {
         window.open(url)
     }

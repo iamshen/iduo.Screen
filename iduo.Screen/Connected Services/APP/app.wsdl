@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="AppClass">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="parentId" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AppClassResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AppClassResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MySoapHeader" type="tns:MySoapHeader" />
+      <s:complexType name="MySoapHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PassWord" type="s:string" />
+        </s:sequence>
+        <s:anyAttribute />
+      </s:complexType>
+      <s:element name="GetAppByClass">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="classId" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="page" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="pagesize" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAppByClassResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAppByClassResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAppByName">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAppByNameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAppByNameResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MyAppByClass">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="classId" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="page" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="pagesize" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MyAppByClassResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MyAppByClassResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MyAppAdd">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="myApply" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="action" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MyAppAddResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MyAppAddResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HotAppByClass">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="classId" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="page" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="pagesize" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HotAppByClassResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HotAppByClassResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="AppClassSoapIn">
+    <wsdl:part name="parameters" element="tns:AppClass" />
+  </wsdl:message>
+  <wsdl:message name="AppClassSoapOut">
+    <wsdl:part name="parameters" element="tns:AppClassResponse" />
+  </wsdl:message>
+  <wsdl:message name="AppClassMySoapHeader">
+    <wsdl:part name="MySoapHeader" element="tns:MySoapHeader" />
+  </wsdl:message>
+  <wsdl:message name="GetAppByClassSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAppByClass" />
+  </wsdl:message>
+  <wsdl:message name="GetAppByClassSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAppByClassResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAppByClassMySoapHeader">
+    <wsdl:part name="MySoapHeader" element="tns:MySoapHeader" />
+  </wsdl:message>
+  <wsdl:message name="GetAppByNameSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAppByName" />
+  </wsdl:message>
+  <wsdl:message name="GetAppByNameSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAppByNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAppByNameMySoapHeader">
+    <wsdl:part name="MySoapHeader" element="tns:MySoapHeader" />
+  </wsdl:message>
+  <wsdl:message name="MyAppByClassSoapIn">
+    <wsdl:part name="parameters" element="tns:MyAppByClass" />
+  </wsdl:message>
+  <wsdl:message name="MyAppByClassSoapOut">
+    <wsdl:part name="parameters" element="tns:MyAppByClassResponse" />
+  </wsdl:message>
+  <wsdl:message name="MyAppByClassMySoapHeader">
+    <wsdl:part name="MySoapHeader" element="tns:MySoapHeader" />
+  </wsdl:message>
+  <wsdl:message name="MyAppAddSoapIn">
+    <wsdl:part name="parameters" element="tns:MyAppAdd" />
+  </wsdl:message>
+  <wsdl:message name="MyAppAddSoapOut">
+    <wsdl:part name="parameters" element="tns:MyAppAddResponse" />
+  </wsdl:message>
+  <wsdl:message name="MyAppAddMySoapHeader">
+    <wsdl:part name="MySoapHeader" element="tns:MySoapHeader" />
+  </wsdl:message>
+  <wsdl:message name="HotAppByClassSoapIn">
+    <wsdl:part name="parameters" element="tns:HotAppByClass" />
+  </wsdl:message>
+  <wsdl:message name="HotAppByClassSoapOut">
+    <wsdl:part name="parameters" element="tns:HotAppByClassResponse" />
+  </wsdl:message>
+  <wsdl:message name="HotAppByClassMySoapHeader">
+    <wsdl:part name="MySoapHeader" element="tns:MySoapHeader" />
+  </wsdl:message>
+  <wsdl:portType name="APPSoap">
+    <wsdl:operation name="AppClass">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">应用分类 parentId=0 一级；type=0 移动端&amp;PC端；type=1 PC端；type=2 移动端；type=3 大屏端</wsdl:documentation>
+      <wsdl:input message="tns:AppClassSoapIn" />
+      <wsdl:output message="tns:AppClassSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAppByClass">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">获取应用根据应用分类 type=0 移动端&amp;PC端；type=1 PC端；type=2 移动端；type=3 大屏端</wsdl:documentation>
+      <wsdl:input message="tns:GetAppByClassSoapIn" />
+      <wsdl:output message="tns:GetAppByClassSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAppByName">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">获取应用根据应用名称 type=0 移动端&amp;PC端；type=1 PC端；type=2 移动端；type=3 大屏端</wsdl:documentation>
+      <wsdl:input message="tns:GetAppByNameSoapIn" />
+      <wsdl:output message="tns:GetAppByNameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MyAppByClass">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">我的收藏根据分类 type=0 移动端&amp;PC端；type=1 PC端；type=2 移动端；type=3 大屏端</wsdl:documentation>
+      <wsdl:input message="tns:MyAppByClassSoapIn" />
+      <wsdl:output message="tns:MyAppByClassSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MyAppAdd">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">添加收藏</wsdl:documentation>
+      <wsdl:input message="tns:MyAppAddSoapIn" />
+      <wsdl:output message="tns:MyAppAddSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="HotAppByClass">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">热门应用根据分类 type=0 移动端&amp;PC端；type=1 PC端；type=2 移动端；type=3 大屏端</wsdl:documentation>
+      <wsdl:input message="tns:HotAppByClassSoapIn" />
+      <wsdl:output message="tns:HotAppByClassSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="APPSoap" type="tns:APPSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="AppClass">
+      <soap:operation soapAction="http://tempuri.org/AppClass" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:AppClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAppByClass">
+      <soap:operation soapAction="http://tempuri.org/GetAppByClass" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetAppByClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAppByName">
+      <soap:operation soapAction="http://tempuri.org/GetAppByName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetAppByNameMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MyAppByClass">
+      <soap:operation soapAction="http://tempuri.org/MyAppByClass" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:MyAppByClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MyAppAdd">
+      <soap:operation soapAction="http://tempuri.org/MyAppAdd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:MyAppAddMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HotAppByClass">
+      <soap:operation soapAction="http://tempuri.org/HotAppByClass" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:HotAppByClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="APPSoap12" type="tns:APPSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="AppClass">
+      <soap12:operation soapAction="http://tempuri.org/AppClass" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:AppClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAppByClass">
+      <soap12:operation soapAction="http://tempuri.org/GetAppByClass" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetAppByClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAppByName">
+      <soap12:operation soapAction="http://tempuri.org/GetAppByName" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetAppByNameMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MyAppByClass">
+      <soap12:operation soapAction="http://tempuri.org/MyAppByClass" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:MyAppByClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MyAppAdd">
+      <soap12:operation soapAction="http://tempuri.org/MyAppAdd" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:MyAppAddMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HotAppByClass">
+      <soap12:operation soapAction="http://tempuri.org/HotAppByClass" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:HotAppByClassMySoapHeader" part="MySoapHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="APP">
+    <wsdl:port name="APPSoap" binding="tns:APPSoap">
+      <soap:address location="http://112.16.69.191:8810/webservices/app.asmx" />
+    </wsdl:port>
+    <wsdl:port name="APPSoap12" binding="tns:APPSoap12">
+      <soap12:address location="http://112.16.69.191:8810/webservices/app.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

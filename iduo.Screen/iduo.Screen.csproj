@@ -114,6 +114,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -222,6 +223,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Common\JsonHelper.cs" />
+    <Compile Include="Connected Services\APP\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Extensions\Common.cs" />
     <Compile Include="Extensions\JsonHelper.cs" />
@@ -230,13 +237,40 @@
     </Compile>
     <Compile Include="Models\Classtitle.cs" />
     <Compile Include="Models\ClassVM.cs" />
-    <Compile Include="Models\EhallVM.cs" />
+    <Compile Include="Models\AppVm.cs" />
+    <Compile Include="Models\Notice.cs" />
+    <Compile Include="Models\SchoolCalendarVM.cs" />
     <Compile Include="Models\Source.cs" />
     <Compile Include="Models\UserVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Connected Services\APP\app.disco" />
+    <None Include="Connected Services\APP\configuration91.svcinfo" />
+    <None Include="Connected Services\APP\configuration.svcinfo" />
+    <Content Include="Connected Services\APP\iduo.Screen.APP.AppClassResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\APP\iduo.Screen.APP.GetAppByClassResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\APP\iduo.Screen.APP.GetAppByNameResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\APP\iduo.Screen.APP.HotAppByClassResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\APP\iduo.Screen.APP.MyAppAddResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\APP\iduo.Screen.APP.MyAppByClassResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Connected Services\APP\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Content\AdminLTE-2.3.11\bootstrap\css\bootstrap-theme.css" />
     <Content Include="Content\AdminLTE-2.3.11\bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="Content\AdminLTE-2.3.11\bootstrap\css\bootstrap.css" />
@@ -1432,6 +1466,7 @@
     <Content Include="Content\fullcalendar-3.2.0\demos\php\get-timezones.php" />
     <Content Include="Content\fullcalendar-3.2.0\demos\php\utils.php" />
     <Content Include="Images\iduo-bg.png.bak" />
+    <None Include="Connected Services\APP\app.wsdl" />
     <None Include="Properties\PublishProfiles\iduoScreen.pubxml" />
     <None Include="Scripts\jquery\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\cityid.js" />
@@ -1486,6 +1521,12 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\APP\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

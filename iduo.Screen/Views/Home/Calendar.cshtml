@@ -1,8 +1,8 @@
 ﻿@{
     Layout = null;
     var url = ViewBag.url;
-    var classTableName = string.IsNullOrEmpty(ViewBag.classTableName)?"课程表":ViewBag.classTableName;
-  
+    var classTableName = string.IsNullOrEmpty(ViewBag.classTableName) ? "课程表" : ViewBag.classTableName;
+    var xiaoli = ViewBag.xiaoli;
 }
 
 <!DOCTYPE html>
@@ -12,7 +12,7 @@
     <title>课程表</title>
 
     <link href="~/Content/fullcalendar-3.2.0/fullcalendar.min.css" rel="stylesheet" />
-    <link href="~/Content/fullcalendar-3.2.0/fullcalendar.print.css" rel="stylesheet"  media='print' />
+    <link href="~/Content/fullcalendar-3.2.0/fullcalendar.print.css" rel="stylesheet" media='print' />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -22,8 +22,6 @@
     <script src="~/Content/fullcalendar-3.2.0/fullcalendar.min.js"></script>
     <script src="~/Content/fullcalendar-3.2.0/locale-all.js"></script>
     <script src="~/Content/fullcalendar-3.2.0/lib/jquery-ui-1.10.2.custom.min.js"></script>
-
-
 
     <script>
 
@@ -40,7 +38,7 @@
 				center: 'title',
 				right: 'agendaWeek'
             },
-            titleFormat: '[2017-2018 学年 第一学期 ]',
+            titleFormat: '[@xiaoli ]',
 			height: 910,
             theme:false,//是否使用jq-ui
             slotDuration: '01:00:00',
@@ -85,7 +83,7 @@
                      },
                  }
 			],
-		
+
 		 });
         //上一周
 		$('#calendar').find('.fc-prev-button').click(function () {
@@ -93,7 +91,7 @@
         //下一周
 		$('#calendar').find('.fc-next-button').click(function () {
         })
-       
+
 	});
     </script>
     <style>
@@ -104,10 +102,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            height:100%;
-            display:table-cell;
-            vertical-align:middle;
-            line-height:20px;
+            height: 100%;
+            display: table-cell;
+            vertical-align: middle;
+            line-height: 20px;
         }
 
         .fc-time {
@@ -116,19 +114,21 @@
         }
 
         .fc-content {
-            margin:3% 0 0 10%!important;
+            margin: 3% 0 0 10% !important;
             font-size: 15px;
-            height:100%;
-            display:table;
+            height: 100%;
+            display: table;
         }
-        
+
         .fc-event {
             background-color: #15a563;
             border-color: #15a563;
         }
-           .fc-widget-content {
+
+        .fc-widget-content {
             height: 33.3333333px !important;
         }
+
         #top {
             background: #eee;
             border-bottom: 1px solid #ddd;
@@ -138,15 +138,13 @@
         }
 
         #calendar {
-            margin: 10px  auto 0 auto;
+            margin: 10px auto 0 auto;
             padding: 0 10px;
         }
 
         .ml-12 {
             margin: 0 0 0 12%;
         }
-
-
 
         .divjc {
             /*display: none;*/
@@ -188,11 +186,13 @@
             border-right: 1px solid #333;
             text-align: center;
         }
-          .divclassam {
+
+        .divclassam {
             float: right;
             width: 50%;
             height: 100%;
         }
+
         .divpm {
             padding-top: 103px;
             padding-left: 10px;
@@ -205,11 +205,13 @@
             border-right: 1px solid #333;
             text-align: center;
         }
-         .divclasspm {
+
+        .divclasspm {
             float: right;
             width: 50%;
             height: 100%;
         }
+
         .divmm {
             padding-top: 40px;
             padding-left: 10px;
@@ -222,6 +224,7 @@
             border-right: 1px solid #333;
             text-align: center;
         }
+
         .divclassmm {
             float: right;
             width: 50%;
@@ -429,7 +432,6 @@
                                         <div class="div-b duv-b-border">第八节</div>
                                         <div class="div-b">第九节</div>
                                     </div>
-
                                 </div>
                                 <div class="div-ws">
                                     <div class="div-mm">晚上</div>

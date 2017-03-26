@@ -1,32 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 
 namespace iduo.Screen.Models
 {
 
     /// <summary>
-    /// 办事大厅视图模型
+    /// 应用相关视图模型
     /// </summary>
-    public class EhallVM : UserVM
+    public class AppVm : UserVM
     {
         /// <summary>
         /// 获取或设置 服务分类
         /// </summary>
         public List<AppClassModel> ClassList { get; set; }
-        /// <summary>
-        /// 获取或设置 部门分类
-        /// </summary>
-        public List<string> DeptClassList { get; set; }
-        /// <summary>
-        /// 获取或设置 服务对象
-        /// </summary>
-        public List<ServiceTion> TionClassList { get; set; }
-        /// <summary>
-        /// 获取或设置 责任部门
-        /// </summary>
-        public List<DeptTion> DeptTionList { get; set; }
+     
         /// <summary>
         /// 按拼音首字母应用列表
         /// </summary>
@@ -37,17 +27,14 @@ namespace iduo.Screen.Models
         /// </summary>
         public List<APPModel> AllAppList { get; set; }
 
-        public EhallVM()
+        public AppVm()
         {
-            DeptClassList = new List<string>();
             ClassList = new List<AppClassModel>();
             AppList = new Dictionary<string, List<APPModel>>();
             AllAppList = new List<APPModel>();
-            TionClassList = new List<ServiceTion>();
-            DeptTionList = new List<DeptTion>();
+           
         }
     }
-
 
     /// <summary>
     /// 应用信息类
@@ -96,7 +83,7 @@ namespace iduo.Screen.Models
         public int ORDERNO { get; set; }
         public string EXT1 { get; set; }
         public string EXT2 { get; set; }
-        public string EXT3 { get; set; }
+        public string EXT3 { get; set; }//背景色
         public string EXT4 { get; set; }
         public string EXT5 { get; set; }
         public string EXT6 { get; set; }
@@ -148,42 +135,39 @@ namespace iduo.Screen.Models
         public string EHALLTYPE { get; set; }
     }
 
-    /// <summary>
-    /// 服务对象
-    /// </summary>
-    public class ServiceTion
+    //应用显示视图模型
+    [DataContract]
+    public class AppViewModel
     {
-        /// <summary>
-        /// 服务对象
-        /// </summary>
-        public string FWDX_FWDX { get; set; }
-        /// <summary>
-        /// 排序ID
-        /// </summary>
-        public string FWDX_ID { get; set; }
-        /// <summary>
-        /// 分类ID
-        /// </summary>
-        public string GUID { get; set; }
+        [DataMember]
+        public int Id { get; set; }
+        [DataMember]
+        public string title { get; set; }//应用标题
+        public string _bg;
+        [DataMember]
+        public string bg
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_bg))
+                    _bg = "#e58d1d";
+                return _bg;
+            }
+            set
+            {
+                _bg = value;
+            }
+        }//背景色
+
+        [DataMember]
+        public string url { get; set; }//跳转地址
+
+        [DataMember]
+        public string bgicon { get; set; }//应用图标
+        [DataMember]
+        public string appName { get; set; }//应用名称
     }
-    /// <summary>
-    /// 责任部门
-    /// </summary>
-    public class DeptTion
-    {
-        /// <summary>
-        /// 责任部门
-        /// </summary>
-        public string ZRBM_ZRBM { get; set; }
-        /// <summary>
-        /// 排序ID
-        /// </summary>
-        public string ZRBM_ID { get; set; }
-        /// <summary>
-        /// 分类ID
-        /// </summary>
-        public string GUID { get; set; }
-    }
+
     /// <summary>
     /// 应用分类信息类
     /// </summary>
@@ -253,6 +237,6 @@ namespace iduo.Screen.Models
         /// <summary>
         /// 单页集合
         /// </summary>
-        public T Items { get; set; }
+        public T items { get; set; }
     }
 }
