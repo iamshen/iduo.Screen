@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net;
+using System.Text;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using iduo.Screen.Models;
 using iduo.Screen.APP;
 using iduo.Screen.Common;
-using System.Runtime.Serialization.Json;
-using System.Text;
+using iduo.Screen.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace iduo.Screen.Controllers
 {
     public class HomeController : Controller
     {
-
         /// <summary>
         /// 课程集合
         /// </summary>
@@ -31,10 +27,12 @@ namespace iduo.Screen.Controllers
         /// 教学通知
         /// </summary>
         public static List<Notice> teachingNoticeList;
+
         /// <summary>
         /// 教学动态
         /// </summary>
         public static List<Notice> teachingTrendsList;
+
         /// <summary>
         /// 讲座预告
         /// </summary>
@@ -44,12 +42,14 @@ namespace iduo.Screen.Controllers
         /// 教学通知
         /// </summary>
         public static string teachingNoticeLists;
-        /// <summary> 
-        /// 教学动态 
+
+        /// <summary>
+        /// 教学动态
         /// </summary>
         public static string teachingTrendsLists;
-        /// <summary> 
-        /// 讲座预告  
+
+        /// <summary>
+        /// 讲座预告
         /// </summary>
         public static string lectureNoticeLists;
 
@@ -65,16 +65,164 @@ namespace iduo.Screen.Controllers
 
         //获取新闻数量：http://112.16.69.191:8810/Pages/news/news.ashx?action=getNewsNum&newsType=1
 
-
-
         //获取新闻：http://112.16.69.191:8810/Pages/news/news.ashx?action=getNews&newsType=1&size=10&page=1&order=time
         //newsType:1=教学通知 2=教学动态 3=讲座预告
         private static string newsCountUrl = ConfigurationManager.AppSettings["iduo.screen.newscount"];
 
         private static string newsUrl = ConfigurationManager.AppSettings["iduo.screen.news"];
 
+        /// <summary>
+        /// 解密
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public string UnEscape(string str)
+        {
+
+            StringBuilder s = new StringBuilder();
+
+            int c = str.Length;
+
+            int i = 0;
+
+            while (i != c)
+
+            {
+
+                if (Uri.IsHexEncoding(str, i))
+                {
+                    s.Append(Uri.HexUnescape(str, ref i));
+                }
+                else
+                {
+                    s.Append(str[i++]);
+                }
+            }
+            return s.ToString();
+
+        }
+
+        /// <summary>
+        /// 大屏首页
+        /// </summary>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
+        public ActionResult Index(int height = 3, int width = 3)
+        {
+            var userid = "";
+            var cookies = "";
+            #region 默认九宫格布局3X3
+
+            var num = height * width;
+            var lessNum = num - 1;
+            ViewBag.num = num;
+            ViewBag.lessNum = lessNum;
+
+            #endregion 默认九宫格布局3X3
+
+            #region 获取应用
+
+            List<AppViewModel> appData = new List<AppViewModel>();
+            if (Request.Cookies["bigscreen"]!=null)
+                cookies = Request.Cookies["bigscreen"].Value;
 
 
+            if (!string.IsNullOrEmpty(cookies))
+            {
+                try
+                {
+                    cookies= cookies.Substring(0, cookies.Length - 1);
+                    cookies= cookies.Substring(1);
+                    JObject obj = (JObject)JsonConvert.DeserializeObject(cookies);
+                    userid = obj["userid"].ToString();
+
+                    APPSoapClient _app = new APPSoapClient();
+                    MySoapHeader header = new MySoapHeader() { UserName = userid, PassWord = "admin@123" };
+                    //应用
+                    string app = _app.GetAppByClass(header, null, 1, 1000, 3);
+                    appData = GetAppModel(app);
+                    AppViewModel = appData;
+                }
+                catch (Exception ex)
+                {
+
+                    appData = null;
+                }
+
+            }
+            else
+            {
+                appData = null;
+            }
+
+
+
+            #endregion 获取应用
+
+            #region 新闻通告
+
+            //教学通知
+            var teachingnotice = "";
+            //教学动态
+            var teachingTrends = "";
+            //讲座预告
+            var lectureNotice = "";
+            //数量
+            var teachingnoticeCount = "";
+            var teachingTrendsCount = "";
+            var lectureNoticeCount = "";
+
+            //获取新闻通告
+            if (!string.IsNullOrEmpty(newsUrl))
+            {
+                teachingnotice = Common.Common.GetNotice(newsUrl, "", 1, 4, 1);
+                teachingTrends = Common.Common.GetNotice(newsUrl, "", 2, 4, 1);
+                lectureNotice = Common.Common.GetNotice(newsUrl, "", 3, 4, 1);
+            }
+            //获取新闻的数量
+            if (!string.IsNullOrEmpty(newsCountUrl))
+            {
+                teachingnoticeCount = Common.Common.GetNoticeCount(newsCountUrl, 1);
+                teachingTrendsCount = Common.Common.GetNoticeCount(newsCountUrl, 2);
+                lectureNoticeCount = Common.Common.GetNoticeCount(newsCountUrl, 3);
+            }
+
+            var tz = Common.Common.FormatNotice(teachingnotice);
+            var dt = Common.Common.FormatNotice(teachingTrends);
+            var yg = Common.Common.FormatNotice(lectureNotice);
+
+            teachingnoticeCount = tz == null ? "0" : tz.ToString();
+            teachingTrendsCount = dt == null ? "0" : dt.Count().ToString();
+            lectureNoticeCount = yg == null ? "0" : yg.Count().ToString();
+
+            ViewBag.teachingNoticeList = tz;
+            ViewBag.teachingTrendsList = dt;
+            ViewBag.lectureNoticeList = yg;
+
+            #endregion 新闻通告
+
+            #region 校历
+
+            var xiaoli = new SchoolCalendarVM();
+            try
+            {
+                var result = Common.Common.GetJsonData(ServiceUrl);
+                xiaoli = GetCNXL(result);
+                if (xiaoli != null)
+                    xl = xiaoli.xn + "学年" + "第" + xiaoli.xq + "学期" + "第" + xiaoli.djz + "周";
+            }
+            catch (Exception)
+            {
+                xiaoli = null;
+            }
+
+            ViewBag.xiaoli = xl;
+
+            #endregion 校历
+
+            return View();
+        }
         /// <summary>
         /// 获取应用
         /// </summary>
@@ -82,17 +230,16 @@ namespace iduo.Screen.Controllers
         /// <returns></returns>
         public List<AppViewModel> GetAppModel(string json)
         {
-
             List<AppViewModel> appListVM = new List<AppViewModel>();
             List<APPModel> appList = new List<APPModel>();
             AppResult<List<APPModel>> appResult = new AppResult<List<APPModel>>();
             try
             {
-                var reuslt= JsonHelper.FormatJson<AppResult< List<APPModel> >> (json);
+                var reuslt = JsonHelper.FormatJson<AppResult<List<APPModel>>>(json);
                 if (reuslt.Code != 1)
                     throw new Exception(reuslt.Msg);
 
-                if (reuslt.Count>0)
+                if (reuslt.Count > 0)
                     appResult = reuslt;
                 appList = appResult.items;
                 if (appList.Count > 0)
@@ -111,195 +258,20 @@ namespace iduo.Screen.Controllers
                         appListVM.Add(App);
                     }
                 }
-                
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                //throw new Exception(ex.Message);
+                return appListVM;
             }
-          
 
             return appListVM;
-
         }
-
-
-
-        /// <summary>
-        /// 获取通告
-        /// </summary>
-        /// <param name="url">获取通告的Url</param>
-        /// <param name="newsType">获取通告的类型： 1=教学通知 2=教学动态 3=讲座预告</param>
-        /// <param name="order">时间</param>
-        /// <param name="size">数量</param>
-        /// <param name="page">第几页</param>
-        /// <returns></returns>
-        public string GetNotice(string url,string order, int newsType,int size=4,int page=1)
+        public ActionResult Iframe(string title, string url)
         {
-            var str = "";
-            try
-            {
-                if (string.IsNullOrEmpty(url))
-                    return "";
-
-                url = url + "&newsType=" + newsType + "&size=" + size + "&page=" + page + "&order=" + order;
-                str = GetJsonData(url);
-            }
-            catch (Exception ex)
-            {
-
-                return "";
-            }
-
-            return str;
-        }
-
-        /// <summary>
-        /// 获取新闻的数量
-        /// </summary>
-        /// <param name="url">获取新闻的数量的Url</param>
-        ///<param name="newsType">获取通告的类型： 1=教学通知 2=教学动态 3=讲座预告</param>
-        /// <returns></returns>
-        public string GetNoticeCount(string url,int newsType)
-        {
-            var str = "";
-            try
-            {
-                if (string.IsNullOrEmpty(url))
-                    return "";
-
-                url = url + "&newsType=" + newsType;
-                str = GetJsonData(url);
-            }
-            catch (Exception ex)
-            {
-
-                return "";
-            }
-
-            return str;
-        }
-
-
-        /// <summary>
-        /// 大屏首页
-        /// </summary>
-        /// <param name="height"></param>
-        /// <param name="width"></param>
-        /// <returns></returns>
-        public ActionResult Index(int height = 3, int width = 3)
-        {
-            #region 默认九宫格布局3X3
-            var num = height * width;
-            var lessNum = num - 1;
-            ViewBag.num = num;
-             ViewBag.lessNum = lessNum;
-            #endregion
-
-            #region 获取应用
-
-            APPSoapClient _app = new APPSoapClient();
-            MySoapHeader header = new MySoapHeader() { UserName = "iduo/zdw", PassWord = "1" };
-            //应用
-            string app = _app.GetAppByClass(header, "", 1, 1000, 3);
-
-            List<AppViewModel> appData = GetAppModel(app);
-            AppViewModel = appData;
-
-            #endregion
-
-            #region 新闻通告
-            //教学通知
-            var teachingnotice = "";
-            //教学动态
-            var teachingTrends = "";
-            //讲座预告
-            var lectureNotice = "";
-            //数量
-            var teachingnoticeCount = "";
-            var teachingTrendsCount = "";
-            var lectureNoticeCount = "";
-
-           
-      
-
-            //获取新闻通告
-            if (!string.IsNullOrEmpty(newsUrl))
-            {
-                teachingnotice = GetNotice(newsUrl, "", 1,4, 1);
-                teachingTrends = GetNotice(newsUrl, "", 2, 4, 1);
-                lectureNotice = GetNotice(newsUrl, "", 3, 4, 1);
-
-            }
-            //获取新闻的数量
-            if (!string.IsNullOrEmpty(newsCountUrl))
-            {
-
-                teachingnoticeCount = GetNoticeCount(newsCountUrl, 1);
-                teachingTrendsCount = GetNoticeCount(newsCountUrl, 2);
-                lectureNoticeCount = GetNoticeCount(newsCountUrl, 3);
-            }
-
-            #region ForTest
-            teachingnotice = "[{id:'1',title:'教学通知',content:'教学通知的内容！',author:'Dave',time:'2017-03-25',url:'http://www.baidu.com'},    {id:'2',title:'教学通知2',content:'教学通知的内容2！',author:'Dave2',time:'2017-03-26',url:'http://www.baidu.com'}]";
-
-            teachingTrends = "[{id:'3',title:'教学动态',content:'教学动态的内容！',author:'Dave',time:'2017-03-25',url:'http://www.baidu.com'},    {id:'4',title:'教学动态2',content:'教学动态的内容2！',author:'Dave2',time:'2017-03-26',url:'http://www.baidu.com'}]";
-
-            lectureNotice = "[{id:'5',title:'讲座预告',content:'讲座预告的内容！',author:'Dave',time:'2017-03-25',url:'http://www.baidu.com'},    {id:'6',title:'讲座预告2',content:'讲座预告的内容2！',author:'Dave2',time:'2017-03-26',url:'http://www.baidu.com'}]";
-            #endregion
-            var tz = FormatNotice(teachingnotice);
-            var dt= FormatNotice(teachingTrends);
-            var yg= FormatNotice(lectureNotice);
-
-            teachingnoticeCount = tz.Count().ToString();
-            teachingTrendsCount = dt.Count().ToString();
-            lectureNoticeCount = yg.Count().ToString();
-
-
-            ViewBag.teachingNoticeList = tz;
-            ViewBag.teachingTrendsList = dt;
-            ViewBag.lectureNoticeList = yg;
-
-            #endregion
-
-            #region 校历
-            var xiaoli = new SchoolCalendarVM();
-            try
-            {
-                var result = GetJsonData(ServiceUrl);
-                xiaoli = GetCNXL(result);
-                if (xiaoli != null)
-                    xl = xiaoli.xn + "学年" + "第" + xiaoli.xq + "学期" + "第" + xiaoli.djz + "周";
-            }
-            catch (Exception)
-            {
-
-                xiaoli = null;
-            }
-
-            ViewBag.xiaoli = xl;
-            #endregion
-
+            ViewBag.url = url;
+            ViewBag.title = title;
             return View();
-        }
-
-        public List<Notice> FormatNotice(string str)
-        {
-            List<Notice> list = new List<Notice>();
-            try
-            {
-                JavaScriptSerializer ser = new JavaScriptSerializer();
-
-                List<Notice> obj = ser.Deserialize<List<Notice>>(str);
-
-                list = obj;
-            }
-            catch (Exception)
-            {
-                return list;
-            }
-            return list;
-
         }
 
         /// <summary>
@@ -314,7 +286,7 @@ namespace iduo.Screen.Controllers
             {
                 JavaScriptSerializer ser = new JavaScriptSerializer();
                 List<SchoolCalendarVM> objs = ser.Deserialize<List<SchoolCalendarVM>>(result);
-                if (objs!=null)
+                if (objs != null)
                     data = objs.FirstOrDefault();
 
                 switch (data.xq)
@@ -322,19 +294,20 @@ namespace iduo.Screen.Controllers
                     case "1":
                         data.xq = "一";
                         break;
+
                     case "2":
                         data.xq = "二";
                         break;
+
                     default:
                         break;
                 }
-
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-           
+
             return data;
         }
 
@@ -349,7 +322,7 @@ namespace iduo.Screen.Controllers
             if (!string.IsNullOrEmpty(url))
             {
                 var reUrl = Server.UrlDecode(url);
-                var str = GetJsonData(url);
+                var str = Common.Common.GetJsonData(url);
                 var listvm = GetClassVM(str);
                 ClassVMdata = listvm;
             }
@@ -358,35 +331,6 @@ namespace iduo.Screen.Controllers
             ViewBag.classTableName = t;
             return View();
         }
-
-        /// <summary>
-        /// 
-        /// 请求一般处理程序接口数据
-        /// </summary>
-        /// <param name="url">请求地址</param>
-        /// <returns></returns>
-        public string GetJsonData(string url)
-        {
-            try
-            {
-                string data = "";
-                HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(url);
-                Request.Method = "POST";
-                Request.ContentType = "application/json";
-                Stream newStream = Request.GetRequestStream(); // Send the data.
-                HttpWebResponse response = (HttpWebResponse)Request.GetResponse();
-                StreamReader sr = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8);
-                data = sr.ReadToEnd();
-                if (data == "]" || data == "[]")
-                    data = "";
-                return data;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
 
         /// <summary>
         /// 获取课程数据模型
@@ -409,7 +353,7 @@ namespace iduo.Screen.Controllers
                     //把序列化后的数根据节次设置上课的开始时间和结束时间
                     foreach (var item in list)
                     {
-                        var vm = GetModel((Classtitle)Enum.Parse(typeof(Classtitle), item.Title), item.Date);
+                        var vm = Common.Common.GetModel((Classtitle)Enum.Parse(typeof(Classtitle), item.Title), item.Date);
                         vm.title = item.Content;
                         vm.Date = item.Date;
                         listVM.Add(vm);//把处理后的课程数据添加到集合中
@@ -424,9 +368,9 @@ namespace iduo.Screen.Controllers
                         var dayClass = listVM.Where(x => x.title == item.title && x.Date == item.Date).OrderBy(x => x.Id).ToList();
                         //如果存在，查询出连堂课
                         var id = dayClass.Select(x => x.Id).ToArray();//所有id
-                        var result = SortId(id);
+                        var result = Common.Common.SortId(id);
                         //相邻的课程id
-                        var intID = GetIntXLID(id);
+                        var intID = Common.Common.GetIntXLID(id);
                         //不相邻的课程id
                         var diff = id.Where(x => !intID.Contains(x)).ToArray();
                         //处理连堂课程合并
@@ -473,56 +417,11 @@ namespace iduo.Screen.Controllers
         }
 
         /// <summary>
-        /// 排序
+        /// 获取课程
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
         /// <returns></returns>
-        public static int[] SortId(int[] id)
-        {
-            int temp = 0;
-            for (int i = 0; i < id.Length - 1; i++)
-            {
-                for (int j = 0; j < id.Length - 1 - i; j++)
-                {
-                    if (id[j] > id[j + 1])
-                    {
-                        temp = id[j];
-                        id[j] = id[j + 1];
-                        id[j + 1] = temp;
-                    }
-                }
-            }
-            return id;
-        }
-
-        /// <summary>
-        /// 查找相邻的课程ID
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static int[] GetIntXLID(int[] id)
-        {
-            List<int> ids = new List<int>();
-            for (int i = 0; i < id.Length - 1; i++)
-            {
-                var item = id[i];
-                var next = id[i + 1];
-                var temp = next - item;
-                if (temp == 1)
-                {
-                    var q = ids.Contains(item);
-                    var a = ids.Contains(next);
-                    if (!q)
-                        ids.Add(item);
-                    if (!a)
-                        ids.Add(next);
-                }
-            }
-            var idArray = ids.ToArray();
-            return idArray;
-        }
-
-        //获取课程
         [HttpGet]
         public ActionResult GetClass(string start, string end)
         {
@@ -530,11 +429,15 @@ namespace iduo.Screen.Controllers
             var startDate = DateTime.ParseExact(start, "yyyy-MM-dd", CultureInfo.CurrentCulture);
             var endDate = DateTime.ParseExact(end, "yyyy-MM-dd", CultureInfo.CurrentCulture);
             if (ClassVMdata != null)
-              data = ClassVMdata.Where(x => x.startDate >= startDate && x.endDate <= endDate).ToList();
+                data = ClassVMdata.Where(x => x.startDate >= startDate && x.endDate <= endDate).ToList();
 
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// 获取应用
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult GetApp()
         {
@@ -547,109 +450,13 @@ namespace iduo.Screen.Controllers
                     data = AppViewModel;
                     result = data.ToJson();
                 }
-                  
             }
             catch (Exception ex)
             {
                 return Content(result);
             }
 
-
             return Content(result);
         }
-
-        /// <summary>
-        /// 根据节次获取课程时间
-        /// </summary>
-        /// <param name="classtitle"></param>
-        /// <param name="datetime"></param>
-        /// <returns></returns>
-        public ClassVM GetModel(Classtitle classtitle, string datetime)
-        {
-            var vm = new ClassVM();
-            try
-            {
-                var date = DateTime.Now;
-                switch (classtitle)
-                {
-                    case Classtitle.第一节课:
-                        vm.start = datetime + "T00:00:00";
-                        vm.end = datetime + "T02:00:00";
-                        break;
-
-                    case Classtitle.第二节课:
-                        vm.start = datetime + "T02:00:00";
-                        vm.end = datetime + "T04:00:00";
-                        break;
-
-                    case Classtitle.第三节课:
-                        vm.start = datetime + "T04:00:00";
-                        vm.end = datetime + "T06:00:00";
-                        break;
-
-                    case Classtitle.第四节课:
-                        vm.start = datetime + "T06:00:00";
-                        vm.end = datetime + "T08:00:00";
-                        vm.startDate = DateTime.Parse(vm.start);
-                        vm.endDate = DateTime.Parse(vm.end);
-                        break;
-
-                    case Classtitle.第五节课:
-                        vm.start = datetime + "T08:00:00";
-                        vm.end = datetime + "T10:00:00";
-                        break;
-
-                    case Classtitle.第六节课:
-                        vm.start = datetime + "T10:00:00";
-                        vm.end = datetime + "T12:00:00";
-                        break;
-
-                    case Classtitle.第七节课:
-                        vm.start = datetime + "T12:00:00";
-                        vm.end = datetime + "T14:00:00";
-                        break;
-
-                    case Classtitle.第八节课:
-                        vm.start = datetime + "T14:00:00";
-                        vm.end = datetime + "T16:00:00";
-                        break;
-
-                    case Classtitle.第九节课:
-                        vm.start = datetime + "T16:00:00";
-                        vm.end = datetime + "T18:00:00";
-                        break;
-
-                    case Classtitle.第十节课:
-                        vm.start = datetime + "T18:00:00";
-                        vm.end = datetime + "T20:00:00";
-                        break;
-
-                    case Classtitle.第十一节课:
-                        vm.start = datetime + "T20:00:00";
-                        vm.end = datetime + "T22:00:00";
-                        break;
-
-                    case Classtitle.第十二节课:
-                        vm.start = datetime + "T22:00:00";
-                        vm.end = datetime + "T23:59:00";
-                        break;
-
-                    default:
-                        break;
-                }
-                vm.Id = (int)classtitle;
-                vm.startDate = DateTime.Parse(vm.start);
-                vm.endDate = DateTime.Parse(vm.end);
-            }
-            catch (Exception ex)
-            {
-                //throw new Exception(ex.Message);
-                return vm;
-            }
-
-            return vm;
-        }
-
-      
     }
 }

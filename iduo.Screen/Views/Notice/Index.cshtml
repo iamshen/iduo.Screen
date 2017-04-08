@@ -1,0 +1,134 @@
+﻿@using iduo.Screen.Models
+@{
+    Layout = null;
+    //新闻
+    var notices = ViewBag.notices as List<Notice>;
+    var newsCount = ViewBag.newsCount;
+    var page = ViewBag.page;
+    var size = ViewBag.size;
+    var newsType = ViewBag.newsType;
+
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/AdminLTE-2.3.11/dist/css/AdminLTE.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap/bootstrap.js"></script>
+
+    <style>
+        body {
+            font-family: "Microsoft YaHei"!important;
+        }
+        .col-xs-6 {
+            margin-left: 22%;
+            margin-top: 3%;
+        }
+        .a-notice-list {
+            display: block;
+            width: 100%;
+            height: 16px;
+            margin-top: 18px;
+            float: left;
+        }
+        .div-poiont {
+            float: left;
+            width: 4px;
+            height: 4px;
+            background: #cfac62;
+            margin-top: 5px;
+            overflow: hidden;
+            zoom: 1;
+        }
+        .div-notice-title {
+            float: left;
+            line-height: 16px;
+            width: 515px;
+            height: 16px;
+            text-align: left;
+            margin-left: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #414141;
+            font-size: 14px;
+        }
+        .div-notice-date {
+            float: right;
+            color: #7c7c7c;
+            line-height: 16px;
+            font-size: 12px;
+            margin-right: 1%;
+        }
+        a:hover {
+            color: #e58d1d !important;
+            text-decoration: none;
+        }
+        a {
+            text-decoration: none;
+        }
+    </style>
+ 
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="box box-success">
+
+                    <div class="box-header">
+                        <h3 class="box-title">@ViewBag.title</h3>
+                    </div>
+
+                    <div class="box-body no-padding">
+
+                        @if (notices != null)
+                        {
+                            foreach (var item in notices)
+                            {
+                                <a class="a-notice-list" href="@item.url" target="_blank" id="@item.id">
+                                    <div class="div-poiont"></div>
+                                    <span class="div-notice-title">@item.title</span>
+                                    <span class="div-notice-date">@item.time</span>
+                                </a>
+                            }
+                        }
+
+                    </div>
+
+                    <div class="box-footer clearfix">
+                        <ul class="pagination no-margin pull-right">
+                            @if (newsCount != null || newsCount > 0)
+                            {
+                                if (page == 1)
+                                {
+                                    <li class="disabled"><a>«</a></li>
+                                }
+                                else
+                                {
+                                    <li><a href="@Url.Action("Index","Notice",new {newsType=@newsType,size=@size,page=(@page-1) })">«</a></li>
+                                }
+                                <li><a>第@(page)页</a></li>
+                                <li><a href="@Url.Action("Index","Notice",new {newsType=@newsType,size=@size,page=(@page+1) })">»</a></li>
+                            }
+
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+
+   
+</script>

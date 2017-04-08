@@ -48,4 +48,12 @@ namespace iduo.Screen.Models
 
 
     }
+
+    /// <summary>
+    /// 新闻数量
+    /// </summary>
+    public class NoticeCount
+    {
+        public string num { get; set; }
+    }
 }

@@ -15,6 +15,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>农林大学客户端</title>
+    <add name="X-Frame-Options" value="SAMEORIGIN" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <link href="~/Scripts/slick/slick.css" rel="stylesheet" />
@@ -27,7 +28,60 @@
     <script src="~/Scripts/bootstrap/bootstrap.js"></script>
     
     <script src="~/Scripts/popwin.js"></script>
+    <style>
+        .close {
+            float: inherit !important;
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            border-radius: 50px;
+            background: black;
+            opacity: 0.5;
+        }
+
+            .close:hover {
+                cursor: pointer;
+                opacity: 1;
+            }
+
+            .close::before, .close::after {
+                content: '';
+                position: absolute;
+                width: 80%;
+                top: 50%;
+                left: 10%;
+                height: 12px;
+                margin-top: -6px;
+                border-radius: 5px;
+                background: #ffffff;
+            }
+
+            .close::before {
+                transform: rotate(45deg);
+            }
+
+            .close::after {
+                transform: rotate(-45deg);
+            }
+
+        .bottomDiv {
+            position: fixed;
+            height: 100px;
+            line-height: 24px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.15);
+            bottom: 40px;
+            _position: absolute;
+            width: 100%;
+        }
+    </style>
     <style type="text/css">
+        .div-h-w {
+        height:100%;
+        width:100%;
+        }
         .btn-success {
             right: 33px;
             position: absolute;
@@ -381,6 +435,7 @@
         <div class="row div-left">
 
             <div class="div-left-top">
+
                 <div class="box box-solid">
                     <div class="box-header with-border">
                         <h4 class="box-title">教学通知</h4>
@@ -389,18 +444,14 @@
                         <!-- the events -->
                         <div class="div-tz">
                             <ul class="list-group">
-                                @if (tz.Count() > 0 && tz != null)
+                                @if (tz != null)
                                 {
                                     foreach (var item in tz)
                                     {
-                                        <li class="list-group-item"><a href="@item.url">@item.title</a></li>
+                                        <li class="list-group-item custom-li"><a onclick="openNW('@item.url')" >@item.title</a></li>
                                     }
                                 }
-                                @*@for (int i = 1; i <= 4; i++)
-                                {
-                                  <li class="list-group-item"><a>浙江农林大学2017年博士研究生招生简</a></li>
-                                }*@
-                                <li class="list-group-item text-center"><a>查看更多....</a></li>
+                                <li class="list-group-item text-center"><a target="_blank" href="@Url.Action("Index","Notice",new {newsType=1})">查看更多....</a></li>
                             </ul>
                         </div>
                     </div>
@@ -417,18 +468,14 @@
                         <!-- the events -->
                         <div class="div-tz">
                             <ul class="list-group">
-                                 @if (dt.Count() > 0 && dt != null)
+                                 @if ( dt != null)
                                 {
                                     foreach (var item in dt)
                                     {
-                                        <li class="list-group-item"><a href="@item.url">@item.title</a></li>
-                                    }
-                                }
-                                @*@for (int i = 1; i <= 4; i++)
-                                {
-                                    <li class="list-group-item"><a>浙江农林大学2017年博士研究生招生简</a></li>
-                                }*@
-                                <li class="list-group-item text-center"><a>查看更多....</a></li>
+                                        <li class="list-group-item"><a href="@Url.Action("Iframe","Home",new { title= "教学动态", url=item.url})" target="_blank">@item.title</a></li>
+                                     }
+                                 }
+                                <li class="list-group-item text-center"><a href="@Url.Action("Index","Notice",new {newsType=2})" target="_blank">查看更多....</a></li>
                             </ul>
                         </div>
                     </div>
@@ -444,18 +491,14 @@
                         <!-- the events -->
                         <div class="div-tz">
                             <ul class="list-group">
-                                   @if (yg .Count() > 0 && yg != null)
+                                @if ( yg != null)
                                 {
                                     foreach (var item in yg)
                                     {
-                                        <li class="list-group-item"><a href="@item.url">@item.title</a></li>
+                                        <li class="list-group-item"><a href="@Url.Action("Iframe","Home",new { title= "讲座预告", url=item.url})" target="_blank">@item.title</a></li>
                                     }
                                 }
-                                @*@for (int i = 1; i <= 4; i++)
-                                {
-                                    <li class="list-group-item"><a>浙江农林大学2017年博士研究生招生简</a></li>
-                                }*@
-                                <li class="list-group-item text-center"><a>查看更多....</a></li>
+                                <li class="list-group-item text-center"><a target="_blank" href="@Url.Action("Index","Notice",new {newsType=3})">查看更多....</a></li>
                             </ul>
                         </div>
                     </div>
@@ -483,9 +526,12 @@
                                     <span>@xiaoli</span>
                                 }
                                 <br />
-                                <span onclick="GotoLink('http://www.zjfc.edu.cn/info/1114/32990.htm')" class="btn btn-success">
-                                    <i class="fa fa-calendar"></i> 校历
-                                </span>
+                                <a href="@Url.Action("Iframe","Home",new { title="校历",url="http://www.zjfc.edu.cn/info/1114/32990.htm"})">
+                                    <span class="btn btn-success">
+                                        <i class="fa fa-calendar"></i> 校历
+                                    </span>
+                                </a>
+                               
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -524,12 +570,34 @@
 
         </div>
 
+
+        <div class="modal fade" id="customModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+            <div class="modal-dialog divtop div-h-w" role="document">
+                <div class="modal-content divtop div-h-w"  id="dialogContent">
+                </div>
+                <div class="bottomDiv"><a data-dismiss="modal" class="close"></a></div>
+
+            </div>
+        </div>
     </div>
 </body>
 
 </html>
 <script src="~/Scripts/cityid.js"></script>
 <script type="text/javascript">
+    $(document).ready(function () {
+        var screenWidth = $(window).width();//获取屏幕可视区域的宽度。
+        $(".bottomDiv").width(screenWidth);//将宽度赋值给bottomDiv使其可以贯穿整个屏幕。
+        var screenHeight = $(window).height();//获取屏幕可视区域的高度。
+        var divHeight = $(".bottomDiv").height() + 1;//bottomDiv的高度再加上它一像素的边框。
+
+        $(window).scroll(function () {
+            var scrollHeight = $(document).scrollTop();//获取滚动条滚动的高度。
+            if (!window.XMLHttpRequest) {
+                $(".bottomDiv").css("top", screenHeight + scrollHeight - divHeight);
+            }//判断是否为IE6，如果是，执行大括号中内容
+        })
+    })
 
     $(function () {
         LoadingApp();
@@ -546,13 +614,13 @@
         var str = "星期" + a[week];
         $(".sys-time").html(new Date().toLocaleDateString() + "&nbsp;" + new Date().toLocaleTimeString()+"&nbsp"+str);
     }
+    var az = "";
     //加载应用,默认3X3
     function LoadingApp() {
         var defaultNum = 9;
         var num = '@num';
         var lessnum = '@lessNum';
         if (num == 0 || num == undefined) num = defaultNum;
-      
         var arr = [];
         var data = [];
         $.ajax({
@@ -563,17 +631,24 @@
             success: function (result) {
                 var json = eval('(' + result + ')');
                 data = json;
-               
+
             },
             error: function (result) {
                 console.log("发生错误" + result);
             }
         });
         $(data).each(function (index, item) {
-            var tpl = "<a style=\"background:{bgclass}\" href=\"{url}\" title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
+            //var tpl = "<a style=\"background:{bgclass}\" href=\"{url}\" title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
+
+            var tpl = "<a style=\"background:{bgclass}\" onclick=\"openNW('{url}')\"  title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
+
             if (index % num == 0) {
                 arr.push("<div>");
             }
+
+            //var aurl = "/Home/Iframe?title=" + item.title + "&url=" + item.url;
+            //arr.push(tpl.replace("{url}", aurl ).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
+
             arr.push(tpl.replace("{url}", item.url).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
             if (index % num == lessnum) {
                 arr.push("</div>");
@@ -584,7 +659,40 @@
         container.html(arr.join(''));
     }
 
-    function GotoLink(url) {
-        window.open(url)
+
+    //打开弹层，并嵌入iframe
+    function openNW(url) {
+        document.getElementById("dialogContent").innerHTML = '<iframe id="iframeId" width="100%" height="100%" frameborder=0 scrolling="auto" src=""></iframe>'
+        var frameSrc = url;
+        $("#iframeId").attr("src", frameSrc);
+        $('#customModal').modal('show');
     }
+
+    function Other(url) {
+        $('#customModal').modal('show');
+        $("#iframeId").attr("src", url);
+        $('#customModal').modal('show');
+    }
+  
+    //$(function () {
+    //    $('.custom-li').click(function () {
+    //        // 找出 li 中的超链接 href(#id)
+    //        var $this = $(this),
+    //            _clickTab = $this.find('a').attr('href'); // 找到链接a中的targer的值
+    //        alert(_clickTab + "_clickTab");
+    //        $.get(_clickTab, function (data) {
+    //            $("#dialogContent").html(data);
+    //        });
+    //    });
+    //});
+
+    //function openNW(url) {
+    //    var screenWidth = $(window).width();//获取屏幕可视区域的宽度。
+    //    var screenHeight = $(window).height();//获取屏幕可视区域的高度。
+    //    //window.open(url, "", "width=" + screenWidth + ",height=" + screenHeight+",toolbar=no,menubar=no,scrollbars=no,resizable=yes,location=no,status=no");
+    //    window.open(url, '', 'width=' + (window.screen.availWidth - 10) + ',height=' + (window.screen.availHeight - 30) + ',top=0,left=0,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')  
+    //}
+
+
+   
 </script>
