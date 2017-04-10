@@ -23,13 +23,14 @@ namespace iduo.Screen
             var value = "";
             try
             {
-               value = HttpContext.Current.Request.Cookies[cookiename].Value;
+                if (HttpContext.Current.Request.Cookies[cookiename]!=null)
+                    value = HttpContext.Current.Request.Cookies[cookiename].Value;
 
             }
-            catch (Exception)
+            catch (Exception ex )
             {
 
-                value = "";
+                value = ex.Message;
             }
 
             string callbackMethodName = HttpContext.Current.Request.Params["jsoncallback"] ?? "";
@@ -37,7 +38,8 @@ namespace iduo.Screen
             HttpContext.Current.Response.Write(value);
             HttpContext.Current.Response.End();
 
-
+            if (string.IsNullOrWhiteSpace(value))
+                return "null";
             return value;
         }
 

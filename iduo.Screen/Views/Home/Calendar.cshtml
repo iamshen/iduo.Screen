@@ -1,6 +1,7 @@
 ﻿@{
     Layout = null;
     var url = ViewBag.url;
+    var urldjz = ViewBag.urldjz;
     var classTableName = string.IsNullOrEmpty(ViewBag.classTableName) ? "课程表" : ViewBag.classTableName;
     var xiaoli = ViewBag.xiaoli;
 }
@@ -25,20 +26,21 @@
 
     <script>
 
-	$(document).ready(function() {
-		var date = new Date();
-		var d = date.getDate();
-		var m = date.getMonth();
-		var y = date.getFullYear();
-		var t = date.getTime();
-        //初始化日历
-		$('#calendar').fullCalendar({
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'agendaWeek'
-            },
-            titleFormat: '[@xiaoli ]',
+        $(document).ready(function () {
+            var date = new Date();
+            var d = date.getDate();
+            var m = date.getMonth();
+            var y = date.getFullYear();
+            var t = date.getTime();
+            var urlq = '@url';
+            //初始化日历
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek'
+                },
+            titleFormat: GetXiaoli(),
 			height: 910,
             theme:false,//是否使用jq-ui
             slotDuration: '01:00:00',
@@ -68,31 +70,58 @@
                 week: '周',
                 prev: '上周',
                 next: '下周',
-			},
-			eventClick: function(event) {
-			    if (event.url) {
-			        return false;
-			    }
-			},
-			eventSources: [
-                 {
-                     url: '/Home/GetClass',
-                     type: 'GET',
-                     error: function () {
-                         console.log("发生错误")
-                     },
-                 }
-			],
+            },
+             eventSources: Myfunction(),
 
-		 });
-        //上一周
-		$('#calendar').find('.fc-prev-button').click(function () {
-		})
-        //下一周
-		$('#calendar').find('.fc-next-button').click(function () {
-        })
+            });
 
-	});
+            function Myfunction() {
+                var option = [
+                    {
+                        url: '/Home/GetClass',
+                        type: 'GET',
+                        data: { url: urlq },
+                        error: function () {
+                            console.log("发生错误")
+                        },
+                    }
+                ];
+
+                return option;
+            }
+
+            function GetXiaoli() {
+                var xiaolistr = "";
+                $.ajax({
+                    url: '/Home/Getxiaoli',
+                    type: 'GET',
+                    async: false,
+                    success: function (result) {
+                        if (result != "") {
+                            xiaolistr = result;
+                        }
+
+                    }
+                });
+                alert(xiaolistr);
+                return xiaolistr;
+            }
+
+  //      //上一周
+  //      $('#calendar').find('.fc-prev-button').click(function () {
+  //          alert("点击了上一周");
+
+		//})
+  //      //下一周
+  //      $('#calendar').find('.fc-next-button').click(function () {
+  //          alert("点击了上下一周");
+
+  //      })
+
+        });
+
+
+
     </script>
     <style>
         .fc-title {

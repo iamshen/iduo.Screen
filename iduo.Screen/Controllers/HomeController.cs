@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using iduo.Screen.APP;
@@ -58,6 +59,9 @@ namespace iduo.Screen.Controllers
         /// </summary>
         public static string xl;
 
+        //校历
+        public string xiaoliStr { get; set; }
+
         /// <summary>
         /// 获取校历URL
         /// </summary>
@@ -100,6 +104,18 @@ namespace iduo.Screen.Controllers
             }
             return s.ToString();
 
+        }
+
+        [HttpGet]
+        public ActionResult GetHtlmByUrl(string url)
+        {
+            var html =Common.Common.Getdata(url);
+
+            var domain = "http://jwc.zafu.edu.cn/";
+            var zz = @"(?is)(?<=<(a|img|script|link)\b.*?(href|src)="")";
+            string output = Regex.Replace(html, zz, domain);
+
+            return Content(output, "text/html");
         }
 
         /// <summary>
@@ -207,7 +223,7 @@ namespace iduo.Screen.Controllers
             var xiaoli = new SchoolCalendarVM();
             try
             {
-                var result = Common.Common.GetJsonData(ServiceUrl);
+                var result = Common.Common.GetJsonData(ServiceUrl);//请求接口获取校历数据
                 xiaoli = GetCNXL(result);
                 if (xiaoli != null)
                     xl = xiaoli.xn + "学年" + "第" + xiaoli.xq + "学期" + "第" + xiaoli.djz + "周";
@@ -267,12 +283,31 @@ namespace iduo.Screen.Controllers
 
             return appListVM;
         }
-        public ActionResult Iframe(string title, string url)
+        /// <summary>
+        /// 获取应用
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult GetApp()
         {
-            ViewBag.url = url;
-            ViewBag.title = title;
-            return View();
+            var data = new List<AppViewModel>();
+            var result = "";
+            try
+            {
+                if (AppViewModel != null)
+                {
+                    data = AppViewModel;
+                    result = data.ToJson();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content(result);
+            }
+
+            return Content(result);
         }
+
 
         /// <summary>
         /// 获取中文校历
@@ -318,19 +353,224 @@ namespace iduo.Screen.Controllers
         /// <param name="t">课程表页面标题</param>
         /// <returns></returns>
         public ActionResult Calendar(string url, string t)
-        {
+         {
             if (!string.IsNullOrEmpty(url))
             {
-                var reUrl = Server.UrlDecode(url);
-                var str = Common.Common.GetJsonData(url);
-                var listvm = GetClassVM(str);
-                ClassVMdata = listvm;
+                var encodeurl = Server.UrlEncode(url);
+                ViewBag.url = encodeurl;
+                ViewBag.xiaoli = xl;
+                ViewBag.classTableName = t;
             }
-
-            ViewBag.xiaoli = xl;
-            ViewBag.classTableName = t;
+           
             return View();
         }
+     
+
+        /// <summary>
+        /// 获取课程
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult GetClass(string start, string end, string url)
+        {
+            var data = new List<ClassVM>();
+            var startDate = DateTime.ParseExact(start, "yyyy-MM-dd", CultureInfo.CurrentCulture);
+            var endDate = DateTime.ParseExact(end, "yyyy-MM-dd", CultureInfo.CurrentCulture);
+            var nowDate = DateTime.Now;
+            var targeturl = "";
+            if (!string.IsNullOrEmpty(url))
+            {
+                url = Server.UrlDecode(url);
+                url = GetNextOrPreClassUrl(startDate, endDate, nowDate, url);
+             
+                try
+                {
+                    #region 修改url中的第几周
+                    //获取当前时间是星期几
+                    var nowWeekDay = GetWeeDayk(nowDate);
+                    //获取当前时间是本月第几周
+                    var nowWeek = GetWeekOfYear(nowDate);
+                    //获取开始时间是本月第几周
+                    var startWeek = GetWeekOfYear(startDate);
+                    //获取相差周数
+                    var timeDifference = startWeek - nowWeek;
+                    // //获取url中的第几周                 
+                    int urldjz = GetSubStringdjz(url);
+                    //需要小改成的第几周
+                    var tartgetDjz = urldjz + timeDifference;
+                    //更新校历
+                    var result = Common.Common.GetJsonData(ServiceUrl);//请求接口获取校历数据
+                    var xiaoli = GetCNXL(result);
+                    if (xiaoli != null)
+                        xiaoliStr ="["+ xiaoli.xn + "学年" + "第" + xiaoli.xq + "学期" + "第" + tartgetDjz.ToString() + "周"+"]";
+
+                    //替换url中的第几周为相差周数
+                    targeturl = ReplaceUrlBydjz(url, tartgetDjz.ToString());
+                    #endregion
+                }
+                catch (Exception)
+                {
+                    targeturl = url;
+                }
+                
+               
+                var str = Common.Common.GetJsonData(targeturl);
+                var listvm = GetClassVM(str);
+                data = listvm;
+            }
+          
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult Getxiaoli()
+        {
+            if (string.IsNullOrEmpty(xiaoliStr))
+            {
+                var result = Common.Common.GetJsonData(ServiceUrl);//请求接口获取校历数据
+                var xiaoli = GetCNXL(result);
+                if (xiaoli != null)
+                    xiaoliStr = "["+xiaoli.xn + "学年" + "第" + xiaoli.xq + "学期" + "第" + xiaoli.djz + "周"+"]";
+            }
+          
+            return Json(xiaoliStr, JsonRequestBehavior.AllowGet);
+        }
+
+        #region 废弃的获取课程
+        /// <summary>
+        /// 获取课程
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        //[HttpGet]
+        //public ActionResult GetClass(string start, string end,string url)
+        //{
+        //    var data = new List<ClassVM>();
+        //    var startDate = DateTime.ParseExact(start, "yyyy-MM-dd", CultureInfo.CurrentCulture);
+        //    var endDate = DateTime.ParseExact(end, "yyyy-MM-dd", CultureInfo.CurrentCulture);
+        //    if (ClassVMdata != null)
+        //        data = ClassVMdata.Where(x => x.startDate >= startDate && x.endDate <= endDate).ToList();
+
+        //    return Json(data, JsonRequestBehavior.AllowGet);
+        //}
+        #endregion
+
+        #region 处理点击获取上下周的方法
+
+        /// <summary>
+        /// 获取指定时间是一年中的第几周
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static int GetWeekOfYear(DateTime dt)
+        {
+            GregorianCalendar gc = new GregorianCalendar();
+            int weekOfYear = gc.GetWeekOfYear(dt, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+            return weekOfYear;
+        }
+        /// <summary>
+        /// 获取指定时间是本月的第几周
+        /// </summary>
+        /// <param name="daytime"></param>
+        /// <returns></returns>
+        public static int getWeekNumInMonth(DateTime daytime)
+        {
+            int dayInMonth = daytime.Day;
+            //本月第一天  
+            DateTime firstDay = daytime.AddDays(1 - daytime.Day);
+            //本月第一天是周几  
+            int weekday = (int)firstDay.DayOfWeek == 0 ? 7 : (int)firstDay.DayOfWeek;
+            //本月第一周有几天  
+            int firstWeekEndDay = 7 - (weekday - 1);
+            //当前日期和第一周之差  
+            int diffday = dayInMonth - firstWeekEndDay;
+            diffday = diffday > 0 ? diffday : 1;
+            //当前是第几周,如果整除7就减一天  
+            int WeekNumInMonth = ((diffday % 7) == 0
+             ? (diffday / 7 - 1)
+             : (diffday / 7)) + 1 + (dayInMonth > firstWeekEndDay ? 1 : 0);
+            return WeekNumInMonth;
+        }
+        /// <summary>
+        /// 获取指定时间是星期几
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static string GetWeeDayk(DateTime date)
+        {
+            string[] weekdays = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
+            string week = weekdays[Convert.ToInt32(date.DayOfWeek)];
+
+            return week;
+        }
+
+        /// <summary>
+        /// 修改url中的第几周
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="nowDate"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string GetNextOrPreClassUrl(DateTime startDate, DateTime endDate, DateTime nowDate, string url)
+        {
+            try
+            {
+                //获取当前时间是星期几
+                var nowWeekDay = GetWeeDayk(nowDate);
+                //获取当前时间是本月第几周
+                var nowWeek = GetWeekOfYear(nowDate);
+                //获取开始时间是本月第几周
+                var startWeek = GetWeekOfYear(startDate);
+                //获取相差周数
+                var timeDifference = startWeek - nowWeek;
+                // //获取url中的第几周                 
+                int urldjz = GetSubStringdjz(url);
+                //替换url中的第几周为相差周数
+                var tartgetDjz = urldjz + timeDifference;
+                url = ReplaceUrlBydjz(url, tartgetDjz.ToString());
+            }
+            catch (Exception)
+            {
+                return url;
+            }
+
+            return url;
+        }
+        /// <summary>
+        /// 获取url中的djz
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static int GetSubStringdjz(string url)
+        {
+            var a = url.IndexOf("&djz=");
+            var b = url.IndexOf("&jxcd=");
+            var djzstr = url.Substring(a);
+            djzstr = djzstr.Substring(0, djzstr.IndexOf("&jxcd="));
+            djzstr = djzstr.Substring(djzstr.LastIndexOf("=") + 1);
+            var djz = Convert.ToInt32(djzstr);//第几周
+            return djz;
+        }
+
+        /// <summary>
+        /// 替换url中的第几周
+        /// </summary>
+        /// <param name="url">原url</param>
+        /// <param name="targetDjz">替换的第几周</param>
+        /// <returns>返回替换的url</returns>
+        public static string ReplaceUrlBydjz(string url, string targetDjz)
+        {
+            Regex r = new Regex("(?<=&djz=).*?(?=&jxcd=)", RegexOptions.IgnoreCase);
+            string result = r.Replace(url, targetDjz);
+            return result;
+        }
+        #endregion
+
 
         /// <summary>
         /// 获取课程数据模型
@@ -417,46 +657,19 @@ namespace iduo.Screen.Controllers
         }
 
         /// <summary>
-        /// 获取课程
+        /// iframe 页面，底部添加返回按钮
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
+        /// <param name="title"></param>
+        /// <param name="url"></param>
+        /// <param name="htmlurl"></param>
         /// <returns></returns>
-        [HttpGet]
-        public ActionResult GetClass(string start, string end)
+        public ActionResult Iframe(string title, string url, string htmlurl)
         {
-            var data = new List<ClassVM>();
-            var startDate = DateTime.ParseExact(start, "yyyy-MM-dd", CultureInfo.CurrentCulture);
-            var endDate = DateTime.ParseExact(end, "yyyy-MM-dd", CultureInfo.CurrentCulture);
-            if (ClassVMdata != null)
-                data = ClassVMdata.Where(x => x.startDate >= startDate && x.endDate <= endDate).ToList();
-
-            return Json(data, JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
-        /// 获取应用
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public ActionResult GetApp()
-        {
-            var data = new List<AppViewModel>();
-            var result = "";
-            try
-            {
-                if (AppViewModel != null)
-                {
-                    data = AppViewModel;
-                    result = data.ToJson();
-                }
-            }
-            catch (Exception ex)
-            {
-                return Content(result);
-            }
-
-            return Content(result);
+            Response.Headers.Set("X-Frame-Options", "sameorigin");
+            ViewBag.url = url;
+            ViewBag.htmlurl = htmlurl;
+            ViewBag.title = title;
+            return View();
         }
     }
 }

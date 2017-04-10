@@ -15,7 +15,6 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>农林大学客户端</title>
-    <add name="X-Frame-Options" value="SAMEORIGIN" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <link href="~/Scripts/slick/slick.css" rel="stylesheet" />
@@ -69,12 +68,19 @@
         .bottomDiv {
             position: fixed;
             height: 100px;
-            line-height: 24px;
+            line-height: 100px;
             text-align: center;
             background-color: rgba(255, 255, 255, 0.15);
-            bottom: 40px;
+            bottom: 15%;
             _position: absolute;
             width: 100%;
+        }
+        .back-span {
+            margin-top: 35% !important;
+            color: white;
+            position: absolute;
+            left: 24px;
+            font-size: 28px;
         }
     </style>
     <style type="text/css">
@@ -448,7 +454,7 @@
                                 {
                                     foreach (var item in tz)
                                     {
-                                        <li class="list-group-item custom-li"><a onclick="openNW('@item.url')" >@item.title</a></li>
+                                        <li class="list-group-item custom-li"><a onclick="Other('@item.url')">@item.title</a></li>
                                     }
                                 }
                                 <li class="list-group-item text-center"><a target="_blank" href="@Url.Action("Index","Notice",new {newsType=1})">查看更多....</a></li>
@@ -472,7 +478,8 @@
                                 {
                                     foreach (var item in dt)
                                     {
-                                        <li class="list-group-item"><a href="@Url.Action("Iframe","Home",new { title= "教学动态", url=item.url})" target="_blank">@item.title</a></li>
+
+                                        <li class="list-group-item"><a href="@item.url" target="_blank">@item.title</a></li>
                                      }
                                  }
                                 <li class="list-group-item text-center"><a href="@Url.Action("Index","Notice",new {newsType=2})" target="_blank">查看更多....</a></li>
@@ -495,7 +502,7 @@
                                 {
                                     foreach (var item in yg)
                                     {
-                                        <li class="list-group-item"><a href="@Url.Action("Iframe","Home",new { title= "讲座预告", url=item.url})" target="_blank">@item.title</a></li>
+                                        <li class="list-group-item"><a href="@item.url" target="_blank">@item.title</a></li>
                                     }
                                 }
                                 <li class="list-group-item text-center"><a target="_blank" href="@Url.Action("Index","Notice",new {newsType=3})">查看更多....</a></li>
@@ -572,10 +579,10 @@
 
 
         <div class="modal fade" id="customModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-            <div class="modal-dialog divtop div-h-w" role="document">
-                <div class="modal-content divtop div-h-w"  id="dialogContent">
+            <div id="dialogContent" class="modal-dialog divtop div-h-w" role="document">
+                <div class="modal-content divtop div-h-w">
                 </div>
-                <div class="bottomDiv"><a data-dismiss="modal" class="close"></a></div>
+                <div class="bottomDiv"><a data-dismiss="modal" class="close"><span class="back-span">返回</span></a></div>
 
             </div>
         </div>
@@ -629,8 +636,10 @@
             async: false,
             datetype: "json",
             success: function (result) {
-                var json = eval('(' + result + ')');
-                data = json;
+                if (result!="") {
+                    var json = eval('(' + result + ')');
+                    data = json;
+                }
 
             },
             error: function (result) {
@@ -638,18 +647,18 @@
             }
         });
         $(data).each(function (index, item) {
-            //var tpl = "<a style=\"background:{bgclass}\" href=\"{url}\" title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
+            var tpl = "<a style=\"background:{bgclass}\" href=\"{url}\" title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
 
-            var tpl = "<a style=\"background:{bgclass}\" onclick=\"openNW('{url}')\"  title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
+           // var tpl = "<a style=\"background:{bgclass}\" onclick=\"openNW('{url}')\"  title=\"{text}\" target=\"_blank\" class=\"col-item  \" ><div class=\"middle-wrap\"><div class=\"middle-inner\"><i class=\" fa {iclass} custom-i\"></i><span class=\"row txt\">{title}</span></div></div></a>";
 
             if (index % num == 0) {
                 arr.push("<div>");
             }
 
-            //var aurl = "/Home/Iframe?title=" + item.title + "&url=" + item.url;
-            //arr.push(tpl.replace("{url}", aurl ).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
+            var aurl = "/Home/Iframe?title=" + item.title + "&url=" + item.url;
+            arr.push(tpl.replace("{url}", aurl ).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
 
-            arr.push(tpl.replace("{url}", item.url).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
+           // arr.push(tpl.replace("{url}", item.url).replace("{bgclass}", item.bg).replace("{text}", item.title == null ? "" : item.title).replace("{title}", item.title).replace("{iclass}", item.bgicon));
             if (index % num == lessnum) {
                 arr.push("</div>");
             }
@@ -667,13 +676,25 @@
         $("#iframeId").attr("src", frameSrc);
         $('#customModal').modal('show');
     }
+  
 
     function Other(url) {
+         $.ajax({
+            type: "Get",
+            url: "@Url.Action("GetHtlmByUrl", "Home")",
+            data: { url: url },
+            success: function (data) {
+                //右侧显示人员信息
+                $('#dialogContent').html(data);
+                //获取该节点下的子菜单
+            },
+        }
+       );
+
         $('#customModal').modal('show');
-        $("#iframeId").attr("src", url);
-        $('#customModal').modal('show');
+
     }
-  
+
     //$(function () {
     //    $('.custom-li').click(function () {
     //        // 找出 li 中的超链接 href(#id)
@@ -690,9 +711,9 @@
     //    var screenWidth = $(window).width();//获取屏幕可视区域的宽度。
     //    var screenHeight = $(window).height();//获取屏幕可视区域的高度。
     //    //window.open(url, "", "width=" + screenWidth + ",height=" + screenHeight+",toolbar=no,menubar=no,scrollbars=no,resizable=yes,location=no,status=no");
-    //    window.open(url, '', 'width=' + (window.screen.availWidth - 10) + ',height=' + (window.screen.availHeight - 30) + ',top=0,left=0,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')  
+    //    window.open(url, '', 'width=' + (window.screen.availWidth - 10) + ',height=' + (window.screen.availHeight - 30) + ',top=0,left=0,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
     //}
 
 
-   
+
 </script>

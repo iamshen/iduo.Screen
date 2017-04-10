@@ -74,7 +74,79 @@
             text-decoration: none;
         }
     </style>
- 
+    <style>
+        .close {
+            float: inherit !important;
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            border-radius: 50px;
+            background: black;
+            opacity: 0.5;
+        }
+
+            .close:hover {
+                cursor: pointer;
+                opacity: 1;
+            }
+
+            /*.close::before, .close::after {
+                  content: '';
+                  position: absolute;
+                  width: 80%;
+                  top: 50%;
+                  left: 10%;
+                  height: 12px;
+                  margin-top: -6px;
+                  border-radius: 5px;
+                  background: #ffffff;
+              }*/
+
+            .close::before {
+                transform: rotate(45deg);
+            }
+
+            .close::after {
+                transform: rotate(-45deg);
+            }
+        .custom-close {
+            float: inherit !important;
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            overflow: hidden;
+            background: #999;
+            opacity: 0.5;
+        }
+        .bottomDiv {
+            position: fixed;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.15);
+            bottom: 15%;
+            _position: absolute;
+            width: 100%;
+        }
+
+        .back-span {
+            margin-top: 35% !important;
+            color: white;
+            position: absolute;
+            left: 24px;
+            font-size: 28px;
+        }
+
+        .custom-botton {
+            width: 150px;
+            color: white;
+            margin-top: 3%;
+            font-size: 30px;
+        }
+    </style>
+
 </head>
 <body>
     <div class="container-fluid">
@@ -115,7 +187,14 @@
                                     <li><a href="@Url.Action("Index","Notice",new {newsType=@newsType,size=@size,page=(@page-1) })">«</a></li>
                                 }
                                 <li><a>第@(page)页</a></li>
-                                <li><a href="@Url.Action("Index","Notice",new {newsType=@newsType,size=@size,page=(@page+1) })">»</a></li>
+                                if (notices.Count() > 0)
+                                {
+                                    <li><a href="@Url.Action("Index","Notice",new {newsType=@newsType,size=@size,page=(@page+1) })">»</a></li>
+                                }
+                                else
+                                {
+                                    <li class="disabled"><a>»</a></li>
+                                }
                             }
 
                             
@@ -124,11 +203,28 @@
                 </div>
             </div>
         </div>
+        @*<div class="bottomDiv"><a href="javascript:window.opener=null;window.open('','_self');window.close();" class="close"><span class="back-span">返回</span></a></div>*@
+        <div class="bottomDiv"><a href="javascript:window.opener=null;window.open('','_self');window.close();" class="btn  btn-lg custom-botton custom-close" onclick="CloseWin()">返回</a></div>
+
     </div>
 </body>
 
 </html>
 <script type="text/javascript">
 
-   
+    $(document).ready(function () {
+
+        var screenWidth = $(window).width();//获取屏幕可视区域的宽度。
+        $(".bottomDiv").width(screenWidth);//将宽度赋值给bottomDiv使其可以贯穿整个屏幕。
+        var screenHeight = $(window).height();//获取屏幕可视区域的高度。
+        var divHeight = $(".bottomDiv").height() + 1;//bottomDiv的高度再加上它一像素的边框。
+
+        $(window).scroll(function () {
+            var scrollHeight = $(document).scrollTop();//获取滚动条滚动的高度。
+            if (!window.XMLHttpRequest) {
+                $(".bottomDiv").css("top", screenHeight + scrollHeight - divHeight);
+            }//判断是否为IE6，如果是，执行大括号中内容
+        })
+
+    })
 </script>

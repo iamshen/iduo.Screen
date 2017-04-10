@@ -27,38 +27,43 @@ namespace iduo.Screen.Controllers
         /// <param name="size">数量</param>
         /// <param name="page">页码</param>
         /// <returns></returns>
-        public ActionResult Index(int newsType, int size = 10, int page = 1)
+        public ActionResult Index(int newsType=0, int size = 10, int page = 1)
         {
             try
             {
-                //获取新闻
-                if (!string.IsNullOrEmpty(newsUrl))
-                    noticeJson = Common.Common.GetNotice(newsUrl, "", newsType, size, page);
-
-                //获取新闻数数量
-                if (!string.IsNullOrEmpty(newsCountUrl))
-                    newsCountJson = Common.Common.GetNoticeCount(newsCountUrl, newsType);
-
-                //新闻
-                List<Notice> formatNotices = Common.Common.FormatNotice(noticeJson);
-                //新闻数量
-                List<NoticeCount> formatNoticeCount = Common.Common.FormatNoticeCount(newsCountJson);
-
-                var newsCount = formatNoticeCount.FirstOrDefault();
-
                 var title = "";
-                switch (newsType)
-                {
-                    case 1:
-                        title = "教学通知";
-                        break;
-                    case 2:
-                        title = "教学动态";
-                        break;
-                    case 3:
-                        title = "讲座预告";
-                        break;
+                List<Notice> formatNotices = new List<Notice>();
+                if (newsType!=0) {
+                    //获取新闻
+                    if (!string.IsNullOrEmpty(newsUrl))
+                        noticeJson = Common.Common.GetNotice(newsUrl, "", newsType, size, page);
+
+                    //获取新闻数数量
+                    if (!string.IsNullOrEmpty(newsCountUrl))
+                        newsCountJson = Common.Common.GetNoticeCount(newsCountUrl, newsType);
+
+                    //新闻
+                    formatNotices = Common.Common.FormatNotice(noticeJson);
+                    //新闻数量
+                    List<NoticeCount> formatNoticeCount = Common.Common.FormatNoticeCount(newsCountJson);
+
+                    var newsCount = formatNoticeCount.FirstOrDefault();
+
+                    switch (newsType)
+                    {
+                        case 1:
+                            title = "教学通知";
+                            break;
+                        case 2:
+                            title = "教学动态";
+                            break;
+                        case 3:
+                            title = "讲座预告";
+                            break;
+                    }
                 }
+
+             
                 ViewBag.title = title;
                 ViewBag.notices = formatNotices;
                 ViewBag.page = page;

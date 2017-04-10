@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Script.Serialization;
 using iduo.Screen.Models;
@@ -13,7 +14,7 @@ namespace iduo.Screen.Common
     {
         /// <summary>
         /// 
-        /// 请求一般处理程序接口数据
+        /// 请求接口数据
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <returns></returns>
@@ -21,6 +22,7 @@ namespace iduo.Screen.Common
         {
             try
             {
+
                 string data = "";
                 HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(url);
                 Request.Method = "POST";
@@ -37,6 +39,38 @@ namespace iduo.Screen.Common
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public static string GER(string pageUrl) {
+
+
+            WebRequest request = WebRequest.Create(pageUrl);
+            WebResponse response = request.GetResponse();
+            Stream resStream = response.GetResponseStream();
+            StreamReader sr = new StreamReader(resStream, System.Text.Encoding.Default);
+            var qwe = sr.ReadToEnd();
+            resStream.Close();
+            sr.Close();
+            return "";
+        }
+        public static string Getdata(string url)
+        {
+            string str = "";
+            try
+            {
+                System.Net.WebClient wc = new System.Net.WebClient();
+                wc.BaseAddress = url;   //设置根目录
+                wc.Encoding = Encoding.UTF8;
+                str = wc.DownloadString("/");
+            }
+            catch (Exception)
+            {
+
+                str = "";
+            }  
+
+
+            return str;
         }
 
 
